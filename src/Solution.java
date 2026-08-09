@@ -1,41 +1,29 @@
-import java.util.Stack;
-public class Solution {
 
-    public class MinStack {
-        Stack<Integer> stack, minStack;
-
-        public MinStack() {
-            stack = new Stack<>();
-            minStack = new Stack<>();
-        }
-
-        public void push(int value) {
-            stack.push(value);
-            if (minStack.isEmpty() || value <= minStack.peek())
-                minStack.push(value);
-        }
-
-        public void pop() {
-            int value = stack.pop();
-            if (minStack.peek() == value)
-                minStack.pop();
-        }
-
-        public int top() {
-            return stack.peek();
-        }
-
-        public int getMin() {
-            return minStack.peek();
-        }
-    }
+//Definition for singly-linked list.
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
 }
 
-/**
- * Your MinStack object will be instantiated and called as such:
- * MinStack obj = new MinStack();
- * obj.push(value);
- * obj.pop();
- * int param_3 = obj.top();
- * int param_4 = obj.getMin();
- */
+public class Solution {
+    public ListNode reverseList(ListNode head) {
+        if (head == null)
+            return null;
+
+        var previous = head;
+        var current = head.next;
+        previous.next = null;
+
+        while (current != null) {
+            var next = current.next;
+            current.next = previous;
+            previous = current;
+            current = next;
+        }
+        head = previous;
+        return head;
+    }
+}
