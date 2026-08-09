@@ -1,14 +1,13 @@
 public class Solution {
-    public int[] shuffle(int[] nums, int n) {
-        int i = 0, j = n, k = 0, len = nums.length;
-        int[] result = new int[len];
-
-        while (k < len) {
-            if (k % 2 == 0)
-                result[k++] = nums[i++];
-            else
-                result[k++] = nums[j++];
+    public int[] getConcatenation(int[] nums) {
+        int i = 0, n = nums.length;
+        int[] result = new int[2*n];
+        while (i < n) {
+            result[i] = nums[i];
+            result[n+i] = nums[i];
+            i++;
         }
+
         return result;
     }
 }
