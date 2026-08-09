@@ -1,79 +1,50 @@
-class MyLinkedList {
-    private class Node {
-        private int value;
-        private Node next;
+class BrowserHistory {
+    private class Page {
+        private String url;
+        private Page previous, next;
 
-        public Node() {
+        public Page(String url) {
+            this.url = url;
         }
 
-        public Node(int value) {
-            this.value = value;
+        public Page(Page previous, String url) {
+            this.previous = previous;
+            this.url = url;
         }
 
-        public Node(int value, Node next) {
-            this.value = value;
+        public Page(Page previous, String url, Page next) {
+            this.previous = previous;
+            this.url = url;
             this.next = next;
         }
     }
 
-    private final Node dummy;
-    private int count;
+    private Page current;
 
-    public MyLinkedList() {
-        dummy = new Node();
+    public BrowserHistory(String homepage) {
+        current = new Page(homepage);
     }
 
-    public int get(int index) {
-        if (index < 0 || index >= count) return -1;
-        var current = dummy.next;
-        while (index-- > 0) current = current.next;
-        return current.value;
+    public void visit(String url) {
+        current.next = new Page(current, url);
+        current = current.next;
     }
 
-    public void addAtHead(int val) {
-        dummy.next = new Node(val, dummy.next);
-        count++;
+    public String back(int steps) {
+        while (current.previous != null && steps-- > 0) current = current.previous;
+        return current.url;
     }
 
-    public void addAtTail(int val) {
-        var current = dummy;
-        while (current.next != null) current = current.next;
-        current.next = new Node(val);
-        count++;
-    }
-
-    public void addAtIndex(int index, int val) {
-        if (index < 0 || index > count) return;
-        if (index == 0) addAtHead(val);
-        else if (index == count) addAtTail(val);
-        else {
-            var current = dummy.next;
-            while (--index > 0) current = current.next;
-            current.next = new Node(val, current.next);
-        count++;
-        }
-    }
-
-    public void deleteAtIndex(int index) {
-        if (index < 0 || index >= count) return;
-        var current = dummy;
-        Node previous = null;
-        while (index-- >= 0) {
-            previous = current;
-            current = current.next;
-        }
-        previous.next = current.next;
-        current.next = null;
-        count--;
+    public String forward(int steps) {
+        while (current.next != null && steps-- > 0) current = current.next;
+        return current.url;
     }
 }
 
 /**
- * Your MyLinkedList object will be instantiated and called as such:
- * MyLinkedList obj = new MyLinkedList();
- * int param_1 = obj.get(index);
- * obj.addAtHead(val);
- * obj.addAtTail(val);
- * obj.addAtIndex(index,val);
- * obj.deleteAtIndex(index);
+ * Your BrowserHistory object will be instantiated and called as such:
+ * BrowserHistory obj = new BrowserHistory(homepage);
+ * obj.visit(url);
+ * String param_2 = obj.back(steps);
+ * String param_3 = obj.forward(steps);
  */
