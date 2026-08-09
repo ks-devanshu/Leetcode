@@ -1,41 +1,12 @@
-import java.util.Queue;
-import java.util.ArrayDeque;
-
-class MyStack {
-    private Queue<Integer> stack;
-
-    public MyStack() {
-        stack = new ArrayDeque<>();
-    }
-
-    public void push(int x) {
-        stack.add(x);
-    }
-
-    public int pop() {
-        int repeat = 0;
-        while (repeat++ < stack.size() - 1) stack.add(stack.remove());
-        return stack.remove();
-    }
-
-    public int top() {
-        int repeat = 0;
-        while (repeat++ < stack.size() - 1) stack.add(stack.remove());
-        int res = stack.peek();
-        stack.add(stack.remove());
-        return res;
-    }
-
-    public boolean empty() {
-        return stack.isEmpty();
+public class Solution {
+    public int fib(int n) {
+        if (n == 0 || n == 1) return n;
+        int a = 0, b = 1, c = a + b;
+        while (n-- > 1) {
+            c = a + b;
+            a = b;
+            b = c;
+        }
+        return c;
     }
 }
-
-/**
- * Your MyStack object will be instantiated and called as such:
- * MyStack obj = new MyStack();
- * obj.push(x);
- * int param_2 = obj.pop();
- * int param_3 = obj.top();
- * boolean param_4 = obj.empty();
- */
