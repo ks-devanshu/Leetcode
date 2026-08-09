@@ -4,14 +4,15 @@ public class Solution {
         nums[k] = nums[i];
         nums[i] = temp;
     }
-
-    public int removeDuplicates(int[] nums) {
-        int k = 0, i = 1, n = nums.length;
+    public int removeElement(int[] nums, int val) {
+        if (nums.length == 0)
+            return 0;
+        int k = 0, i = 0, n = nums.length;
         while (i < n) {
-            if (nums[i] != nums[k])
-                swap(i,++k, nums);
+            if (nums[i] != val)
+                swap(i, k++, nums);
             i++;
         }
-        return k+1;
+        return k;
     }
 }
