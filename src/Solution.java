@@ -1,29 +1,41 @@
 import java.util.Stack;
-import java.util.Map;
-import java.util.HashMap;
 public class Solution {
-    public boolean isValid(String s) {
-        Stack<Character> stack = new Stack<>();
-        Map<Character,Character> map = new HashMap<>();
-        map.put('(',')');
-        map.put('{','}');
-        map.put('[',']');
 
-        for (var each : s.toCharArray()) {
-            if (stack.isEmpty()) {
-                if (each == ')' || each == '}' || each == ']')
-                    return false;
-                stack.push(each);
-            }
-            else {
-                if (each == map.get(stack.peek()))
-                    stack.pop();
-                else if (map.containsKey(each))
-                    stack.push(each);
-                else
-                    return false;
-            }
+    public class MinStack {
+        Stack<Integer> stack, minStack;
+
+        public MinStack() {
+            stack = new Stack<>();
+            minStack = new Stack<>();
         }
-        return stack.isEmpty();
+
+        public void push(int value) {
+            stack.push(value);
+            if (minStack.isEmpty() || value <= minStack.peek())
+                minStack.push(value);
+        }
+
+        public void pop() {
+            int value = stack.pop();
+            if (minStack.peek() == value)
+                minStack.pop();
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int getMin() {
+            return minStack.peek();
+        }
     }
 }
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(value);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
