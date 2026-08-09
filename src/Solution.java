@@ -1,26 +1,29 @@
 import java.util.Stack;
+import java.util.Map;
+import java.util.HashMap;
 public class Solution {
-    public int calPoints(String[] operations) {
-        Stack<Integer> scores = new Stack<>();
-        for (var op : operations) {
-            if (op.equals("C"))
-                scores.pop();
-            else if (op.equals("D")) {
-                scores.push(scores.peek()*2);
-            }
-            else if (op.equals("+")) {
-                int top = scores.pop();
-                int newScore = top + scores.peek();
-                scores.push(top);
-                scores.push(newScore);
-            }
-            else
-                scores.push(Integer.parseInt(op));
-        }
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        Map<Character,Character> map = new HashMap<>();
+        map.put('(',')');
+        map.put('{','}');
+        map.put('[',']');
 
-        int sum = 0;
-        while (!scores.isEmpty())
-            sum += scores.pop();
-        return sum;
+        for (var each : s.toCharArray()) {
+            if (stack.isEmpty()) {
+                if (each == ')' || each == '}' || each == ']')
+                    return false;
+                stack.push(each);
+            }
+            else {
+                if (each == map.get(stack.peek()))
+                    stack.pop();
+                else if (map.containsKey(each))
+                    stack.push(each);
+                else
+                    return false;
+            }
+        }
+        return stack.isEmpty();
     }
 }
