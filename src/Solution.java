@@ -9,21 +9,42 @@ class ListNode {
 }
 
 public class Solution {
-    public ListNode reverseList(ListNode head) {
-        if (head == null)
-            return null;
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null)
+            return list2;
+        if (list2 == null)
+            return list1;
 
-        var previous = head;
-        var current = head.next;
-        previous.next = null;
+        boolean startsWithList1 = true;
+        if (list2.val < list1.val)
+            startsWithList1 = false;
 
-        while (current != null) {
-            var next = current.next;
-            current.next = previous;
-            previous = current;
-            current = next;
+        var primary = startsWithList1 ? list1 : list2;
+        var secondary = startsWithList1 ? list2 : list1;
+        var head = primary;
+        ListNode previous = null;
+
+        while (primary != null && secondary != null) {
+            if (primary.val < secondary.val) {
+                previous = primary;
+                primary = primary.next;
+            }
+            else {
+                var newNode = new ListNode(secondary.val, primary);
+                if (previous == null) {
+                    previous = newNode;
+                    head = previous;
+                }
+                else {
+                    previous.next = newNode;
+                    previous = previous.next;
+                }
+
+                secondary = secondary.next;
+            }
         }
-        head = previous;
+        if (secondary != null)
+            previous.next = secondary;
         return head;
     }
 }
