@@ -1,48 +1,41 @@
-import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.ArrayDeque;
 
-public class Solution {
-    public int countStudents(int[] students, int[] sandwiches) {
-// Better Approach
-//        int[] counts = new int[2];
-//        for (int student : students) counts[student]++;
-//
-//        int remaining = sandwiches.length;
-//        for (int sandwich : sandwiches) {
-//            if (counts[sandwich] == 0) break;
-//            if (remaining-- == 0) break;
-//            counts[sandwich]--;
-//        }
-//
-//        return remaining;
+class MyStack {
+    private Queue<Integer> stack;
 
-        int n = students.length;
-        Queue<Integer> queue = new ArrayDeque<>();
-        Queue<Integer> repeat = new ArrayDeque<>();
-        for (var student : students)
-            queue.add(student);
-        int top = 0;
-        int repeatSize = 0;
+    public MyStack() {
+        stack = new ArrayDeque<>();
+    }
 
-        while (top < n && repeatSize != queue.size()) {
-            while (!queue.isEmpty()) {
-                var choice = queue.remove();
-                if (choice == sandwiches[top])
-                    top++;
-                else
-                    repeat.add(choice);
-            }
-            repeatSize = repeat.size();
-            while (!repeat.isEmpty()) {
-                var choice = repeat.remove();
-                if (choice == sandwiches[top])
-                    top++;
-                else
-                    queue.add(choice);
-            }
-        }
+    public void push(int x) {
+        stack.add(x);
+    }
 
-        return queue.size() == 0 ? repeat.size() : queue.size();
+    public int pop() {
+        int repeat = 0;
+        while (repeat++ < stack.size() - 1) stack.add(stack.remove());
+        return stack.remove();
+    }
 
+    public int top() {
+        int repeat = 0;
+        while (repeat++ < stack.size() - 1) stack.add(stack.remove());
+        int res = stack.peek();
+        stack.add(stack.remove());
+        return res;
+    }
+
+    public boolean empty() {
+        return stack.isEmpty();
     }
 }
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack obj = new MyStack();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.top();
+ * boolean param_4 = obj.empty();
+ */
