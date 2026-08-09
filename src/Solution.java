@@ -1,13 +1,26 @@
+import java.util.Stack;
 public class Solution {
-    public int[] getConcatenation(int[] nums) {
-        int i = 0, n = nums.length;
-        int[] result = new int[2*n];
-        while (i < n) {
-            result[i] = nums[i];
-            result[n+i] = nums[i];
-            i++;
+    public int calPoints(String[] operations) {
+        Stack<Integer> scores = new Stack<>();
+        for (var op : operations) {
+            if (op.equals("C"))
+                scores.pop();
+            else if (op.equals("D")) {
+                scores.push(scores.peek()*2);
+            }
+            else if (op.equals("+")) {
+                int top = scores.pop();
+                int newScore = top + scores.peek();
+                scores.push(top);
+                scores.push(newScore);
+            }
+            else
+                scores.push(Integer.parseInt(op));
         }
 
-        return result;
+        int sum = 0;
+        while (!scores.isEmpty())
+            sum += scores.pop();
+        return sum;
     }
 }
