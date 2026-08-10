@@ -1,41 +1,42 @@
-import java.util.Map;
-import java.util.HashMap;
-
 public class Solution {
-    private int ways;
-    private Map<Integer, Integer> map = new HashMap<>();
-
-    public int climbStairs(int n) {
-//  Better Approach (Fibonacci)
-//        if (n == 1) {
-//            return 1;
-//        }
-//        int prev2 = 1;
-//        int prev1 = 2;
-//        for (int i = 3; i <= n; i++) {
-//            int current = prev1 + prev2;
-//            prev2 = prev1;
-//            prev1 = current;
-//        }
-//        return prev1;
-
-        return climb(n);
+    public int[] sortArray(int[] nums) {
+        return mergeSort(nums);
     }
 
-    private int climb(int n) {
-        if (map.containsKey(n))
-            return map.get(n);
+    private int[] mergeSort(int[] nums) {
+        int n = nums.length;
+        if (n <= 1) return nums;
 
-        if (n == 0) {
-            return 1;
+        int[] left = new int[n / 2];
+        int[] right = new int[n - (n / 2)];
+
+        for (int i = 0; i < n; i++) {
+            if (i < n / 2)
+                left[i] = nums[i];
+            else
+                right[i - (n / 2)] = nums[i];
         }
-        if (n < 0) {
-            return 0;
+
+        left = mergeSort(left);
+        right = mergeSort(right);
+
+        int[] sorted = new int[n];
+        int i = 0, j = 0, k = 0;
+        while (k < n) {
+            if (i >= left.length) {
+                sorted[k++] = right[j++];
+                continue;
+            }
+            if (j >= right.length) {
+                sorted[k++] = left[i++];
+                continue;
+            }
+
+            if (left[i] <= right[j])
+                sorted[k++] = left[i++];
+            else
+                sorted[k++] = right[j++];
         }
-
-        map.put(n - 1, climb(n - 1));
-        map.put(n - 2, climb(n - 2));
-
-        return map.get(n - 1) + map.get(n - 2);
+        return sorted;
     }
 }
