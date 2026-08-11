@@ -1,42 +1,60 @@
-public class Solution {
-    public int[] sortArray(int[] nums) {
-        return mergeSort(nums);
+class ListNode {
+    int val;
+    ListNode next;
+
+    ListNode() {
     }
 
-    private int[] mergeSort(int[] nums) {
-        int n = nums.length;
-        if (n <= 1) return nums;
+    ListNode(int val) {
+        this.val = val;
+    }
 
-        int[] left = new int[n / 2];
-        int[] right = new int[n - (n / 2)];
+    ListNode(int val, ListNode next) {
+        this.val = val;
+        this.next = next;
+    }
+}
 
-        for (int i = 0; i < n; i++) {
-            if (i < n / 2)
-                left[i] = nums[i];
-            else
-                right[i - (n / 2)] = nums[i];
+public class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        int k = lists.length;
+        if (k == 0) return null;
+        if (k == 1) return lists[0];
+
+        for (int i = 1; i < k; i++) {
+            lists[i] = mergeTwo(lists[i - 1], lists[i]);
+        }
+        return lists[k - 1];
+    }
+
+    private ListNode mergeTwo(ListNode first, ListNode second) {
+        if (first == null) return second;
+        if (second == null) return first;
+
+        var primary = first.val <= second.val ? first : second;
+        var secondary = primary == first ? second : first;
+        ListNode previous = null;
+        var head = primary;
+
+        while (primary != null && secondary != null) {
+            if (primary.val <= secondary.val) {
+                previous = primary;
+                primary = primary.next;
+            } else {
+                if (previous == null) {
+                    previous = new ListNode(secondary.val, primary);
+                    head = previous;
+                } else {
+                    previous.next = new ListNode(secondary.val, primary);
+                    previous = previous.next;
+                }
+                secondary = secondary.next;
+            }
+        }
+        if (secondary != null) {
+            previous.next = secondary;
         }
 
-        left = mergeSort(left);
-        right = mergeSort(right);
-
-        int[] sorted = new int[n];
-        int i = 0, j = 0, k = 0;
-        while (k < n) {
-            if (i >= left.length) {
-                sorted[k++] = right[j++];
-                continue;
-            }
-            if (j >= right.length) {
-                sorted[k++] = left[i++];
-                continue;
-            }
-
-            if (left[i] <= right[j])
-                sorted[k++] = left[i++];
-            else
-                sorted[k++] = right[j++];
-        }
-        return sorted;
+        return head;
     }
 }
