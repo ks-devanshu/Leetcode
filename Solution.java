@@ -2,25 +2,23 @@ class TreeNode {
  int val;
  TreeNode left;
  TreeNode right;
- TreeNode() {}
- TreeNode(int val) { this.val = val; }
- TreeNode(int val, TreeNode left, TreeNode right) {
-     this.val = val;
-     this.left = left;
-     this.right = right;
- }
+ TreeNode(int x) { val = x; }
 }
  
+
 class Solution {
-    private int target;
-    public TreeNode searchBST(TreeNode root, int val) {
-        target = val;
-        return searchInBST(root);
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        boolean swap = q.val < p.val;
+        if (swap) return lowestCommonAncestorHelper(root, q, p);
+        return lowestCommonAncestorHelper(root, p, q);
+                
     }
-    private TreeNode searchInBST(TreeNode root) {
-        if (root == null || root.val == val) return root;
+    private TreeNode lowestCommonAncestorHelper(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return null;
+        var current = root.val;
+        if (current == p.val || current == q.val || (p.val < current && q.val > current)) return root;
         
-        if (target < root.val) return searchInBST(root.left);
-        return searchInBST(root.right);
+        if (q.val < current) return lowestCommonAncestorHelper(root.left, p, q);
+        return lowestCommonAncestorHelper(root.right, p , q);
     }
 }
