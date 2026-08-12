@@ -1,8 +1,3 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.ArrayDeque;
-
 class TreeNode {
  int val;
  TreeNode left;
@@ -17,29 +12,17 @@ class TreeNode {
 }
 
 class Solution {
-    // Can follow a traversal approach by visiting in root-right-left order
-    public List<List<Integer>> levelOrder(TreeNode root) {
-        List<List<Integer>> list = new ArrayList<>();
-        if (root == null) return list;
-        Queue<TreeNode> queue = new ArrayDeque<>();
-        queue.add(root);
-      
-        while (!queue.isEmpty()) {
-            List<Integer> level = new ArrayList<>();
-            int k = queue.size();
-            
-            for (int i = 0; i<k; i++) {
-                var node = queue.remove();
-                level.add(node.val);
-                if (node.left != null)
-                    queue.add(node.left);
-                if (node.right != null)
-                    queue.add(node.right);
-            }
-            
-            list.add(level);
-        }
+    public boolean hasPathSum(TreeNode root, int targetSum) {  
+        return hasPathSumHelper(root, 0, targetSum);
+    }
+    
+    private boolean hasPathSumHelper(TreeNode node, int currentSum, int targetSum) {
+        if (node == null) return false;
         
-        return list;
+        currentSum += node.val;
+        if (currentSum == targetSum && node.left == null && node.right == null) return true;
+        
+        return hasPathSumHelper(node.left, currentSum, targetSum) || hasPathSumHelper(node.right, currentSum, targetSum);
+        
     }
 }
