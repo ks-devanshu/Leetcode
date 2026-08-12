@@ -17,6 +17,7 @@ class TreeNode {
 }
 
 class Solution {
+    // Can follow a traversal approach by visiting in root-right-left order
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> list = new ArrayList<>();
         if (root == null) return list;
