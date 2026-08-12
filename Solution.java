@@ -1,4 +1,5 @@
-import java.util.Stack;
+import java.util.Set;
+import java.util.HashSet;
 
 class TreeNode {
  int val;
@@ -12,23 +13,32 @@ class TreeNode {
      this.right = right;
  }
 }
- 
+
 class Solution {
-    private Stack<Integer> stack = new Stack<>();
-    int k;
+    int[] preorder, inorder;
+    Set<Integer> set = new HashSet<>();
     
-    public int kthSmallest(TreeNode root, int k) {
-        this.k = k;
-        inOrder(root);
-        return (!stack.isEmpty()) ? stack.pop() : null;
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        this.preorder = preorder;
+        this.inorder = inorder;
+        
+        return construct(0, 0, preorder.length);
     }
     
-    private void inOrder(TreeNode node) {
-        if (node == null) return;
+    private TreeNode construct(int rootIndex, int min, int max) {
+        if (min >= max || rootIndex < 0 || rootIndex >= preorder.length) return null;
         
-        inOrder(node.left);
-        if (stack.size() < k)
-            stack.push(node.val);
-        inOrder(node.right);
+        if (set.contains(preorder[rootIndex])) return null;
+        
+        var root = new TreeNode(preorder[rootIndex]);
+        set.add(root.val);
+        
+        int mid = 0;
+        while ( mid < max && inorder[mid+min] != root.val ) mid++;
+        
+        root.left = construct(rootIndex+1, min, min+mid);
+        root.right = construct(rootIndex+1+mid, min+mid+1, max);
+        
+        return root;
     }
 }
