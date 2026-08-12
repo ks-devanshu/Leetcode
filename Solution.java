@@ -12,26 +12,32 @@ class TreeNode {
 }
  
 class Solution {
-    public TreeNode insertIntoBST(TreeNode root, int val) {
-        if (root == null) return new TreeNode(val);
+    public TreeNode deleteNode(TreeNode root, int key) {
+        return deleteNodeHelper(root, key);
+    }
+    
+    private TreeNode deleteNodeHelper(TreeNode node, int key) {
+        if (node == null) return null;
         
-        var current = root;
-        while (current != null) {
-            if (val < current.val) {
-                if (current.left == null) {
-                    current.left = new TreeNode(val);
-                    break;
-                }
-                current = current.left;
-            }
+        if (key < node.val)
+            node.left = deleteNodeHelper(node.left, key);
+        else if (key > node.val)
+            node.right = deleteNodeHelper(node.right, key);
+        else {
+            if (node.left == null) return node.right;
+            else if (node.right == null) return node.left;
             else {
-                if (current.right == null) {
-                    current.right = new TreeNode(val);
-                    break;
-                }
-                current = current.right;
+                var minNode = getMinNode(node.right);
+                node.val = minNode.val;
+                node.right = deleteNodeHelper(node.right, node.val);
             }
         }
-        return root;
+        return node;
+    }
+    
+    private TreeNode getMinNode(Node root) {
+        var current = root;
+        while (current != null && current.left != null) current = current.left;
+        return current;
     }
 }
