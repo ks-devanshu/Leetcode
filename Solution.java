@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Stack;
 
 class TreeNode {
  int val;
@@ -15,17 +14,21 @@ class TreeNode {
 }
  
 class Solution {
-    private List<Integer> list = new ArrayList<>();
-    public List<Integer> inorderTraversal(TreeNode root) {
+    private Stack<Integer> stack = new Stack<>();
+    int k;
+    
+    public int kthSmallest(TreeNode root, int k) {
+        this.k = k;
         inOrder(root);
-        return list;
+        return (!stack.isEmpty()) ? stack.pop() : null;
     }
     
     private void inOrder(TreeNode node) {
         if (node == null) return;
         
         inOrder(node.left);
-        list.add(node.val);
+        if (stack.size() < k)
+            stack.push(node.val);
         inOrder(node.right);
     }
 }
