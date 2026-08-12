@@ -1,28 +1,27 @@
-class TreeNode {
- int val;
- TreeNode left;
- TreeNode right;
- TreeNode() {}
- TreeNode(int val) { this.val = val; }
- TreeNode(int val, TreeNode left, TreeNode right) {
-     this.val = val;
-     this.left = left;
-     this.right = right;
- }
-}
+import java.util.List;
+import java.util.ArrayList;
 
 class Solution {
-    public boolean hasPathSum(TreeNode root, int targetSum) {  
-        return hasPathSumHelper(root, 0, targetSum);
+    private int[] nums;
+    private List<List<Integer>> result = new ArrayList<>();
+    
+    public List<List<Integer>> subsets(int[] nums) {
+        this.nums = nums;
+        subsetsHelper(new ArrayList<>(), 0);
+        return result;
     }
     
-    private boolean hasPathSumHelper(TreeNode node, int currentSum, int targetSum) {
-        if (node == null) return false;
+    private void subsetsHelper(List<Integer> set, int i) {
+        if (i >= nums.length) {
+            result.add(new ArrayList<>(set));
+            return;
+        }
         
-        currentSum += node.val;
-        if (currentSum == targetSum && node.left == null && node.right == null) return true;
-        
-        return hasPathSumHelper(node.left, currentSum, targetSum) || hasPathSumHelper(node.right, currentSum, targetSum);
-        
+        // include
+        set.add(nums[i]);
+        subsetsHelper(set, i+1);
+        // exclude
+        set.remove(set.size()-1);
+        subsetsHelper(set, i+1);
     }
 }
