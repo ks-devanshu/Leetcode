@@ -1,5 +1,7 @@
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.ArrayDeque;
 
 class TreeNode {
  int val;
@@ -15,30 +17,28 @@ class TreeNode {
 }
 
 class Solution {
-    int[] preorder, inorder;
-    Set<Integer> set = new HashSet<>();
-    
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        this.preorder = preorder;
-        this.inorder = inorder;
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> list = new ArrayList<>();
+        if (root == null) return list;
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+      
+        while (!queue.isEmpty()) {
+            List<Integer> level = new ArrayList<>();
+            int k = queue.size();
+            
+            for (int i = 0; i<k; i++) {
+                var node = queue.remove();
+                level.add(node.val);
+                if (node.left != null)
+                    queue.add(node.left);
+                if (node.right != null)
+                    queue.add(node.right);
+            }
+            
+            list.add(level);
+        }
         
-        return construct(0, 0, preorder.length);
-    }
-    
-    private TreeNode construct(int rootIndex, int min, int max) {
-        if (min >= max || rootIndex < 0 || rootIndex >= preorder.length) return null;
-        
-        if (set.contains(preorder[rootIndex])) return null;
-        
-        var root = new TreeNode(preorder[rootIndex]);
-        set.add(root.val);
-        
-        int mid = 0;
-        while ( mid < max && inorder[mid+min] != root.val ) mid++;
-        
-        root.left = construct(rootIndex+1, min, min+mid);
-        root.right = construct(rootIndex+1+mid, min+mid+1, max);
-        
-        return root;
+        return list;
     }
 }
