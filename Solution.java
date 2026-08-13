@@ -2,26 +2,31 @@ import java.util.List;
 import java.util.ArrayList;
 
 class Solution {
-    private int[] nums;
-    private List<List<Integer>> result = new ArrayList<>();
+    List<List<Integer>> result = new ArrayList<>();
+    int[] candidates;
+    int target;
     
-    public List<List<Integer>> subsets(int[] nums) {
-        this.nums = nums;
-        subsetsHelper(new ArrayList<>(), 0);
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        this.candidates = candidates;
+        this.target = target;
+        
+        combinationSumHelper(new ArrayList<>(), 0, 0);
         return result;
     }
     
-    private void subsetsHelper(List<Integer> set, int i) {
-        if (i >= nums.length) {
-            result.add(new ArrayList<>(set));
+    private void combinationSumHelper(List<Integer> list, int currentSum, int i) {
+        if (i >= candidates.length) return;
+        if (currentSum == target) {
+            result.add(new ArrayList<>(list));
             return;
         }
         
-        // include
-        set.add(nums[i]);
-        subsetsHelper(set, i+1);
-        // exclude
-        set.remove(set.size()-1);
-        subsetsHelper(set, i+1);
+        if (currentSum > target) return;
+        
+        list.add(candidates[i]);
+        combinationSumHelper(list, currentSum + candidates[i], i);
+
+        list.remove(list.size() - 1);
+        combinationSumHelper(list, currentSum, i+1);
     }
 }
