@@ -1,21 +1,20 @@
-class KthLargest {
-Queue<Integer> queue = new PriorityQueue<>();
-    int k;
-    public KthLargest(int k, int[] nums) {
-        this.k = k;
-        
-        for (var each : nums) {
-            queue.add(each);
-            
-            if (queue.size() > k)
-                queue.remove();
+class Solution {
+    public int lastStoneWeight(int[] stones) {
+        Queue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        for (var stone : stones) {
+            queue.add(stone);
         }
-    }
-    
-    public int add(int val) {
-        queue.add(val);
-        if (queue.size() > k)
-            queue.remove();
-        return queue.peek();
+        
+        while (queue.size() > 1) {
+            int y = queue.remove();
+            int x = queue.remove();
+            
+            if (x == y) continue;
+            
+            queue.add(y-x);
+        }
+        
+        if (queue.size() > 0) return queue. remove();
+        return 0;
     }
 }
