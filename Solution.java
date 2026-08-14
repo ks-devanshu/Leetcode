@@ -1,17 +1,15 @@
-import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
+
 class Solution {
-    public int[][] kClosest(int[][] points, int k) {
-        Arrays.sort(points, (x, y) -> (int) (euclidean(x) - euclidean(y)));
-        int[][] result = new int[k][2];
-        int i = 0;
-        while (i < k) {
-            result[i] = points[i];
-            i++;
-        }
-        return result;
-    }
-    
-    private double euclidean(int[] point) {
-        return (point[0] * point[0]) + (point[1] * point[1]);
+    public boolean containsDuplicate(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        
+        for (var num : nums)
+            if (set.contains(num))
+                return true;
+            else set.add(num);
+        
+        return false;
     }
 }
