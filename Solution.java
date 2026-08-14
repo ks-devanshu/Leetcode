@@ -1,20 +1,17 @@
+import java.util.Arrays;
 class Solution {
-    public int lastStoneWeight(int[] stones) {
-        Queue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
-        for (var stone : stones) {
-            queue.add(stone);
+    public int[][] kClosest(int[][] points, int k) {
+        Arrays.sort(points, (x, y) -> (int) (euclidean(x) - euclidean(y)));
+        int[][] result = new int[k][2];
+        int i = 0;
+        while (i < k) {
+            result[i] = points[i];
+            i++;
         }
-        
-        while (queue.size() > 1) {
-            int y = queue.remove();
-            int x = queue.remove();
-            
-            if (x == y) continue;
-            
-            queue.add(y-x);
-        }
-        
-        if (queue.size() > 0) return queue. remove();
-        return 0;
+        return result;
+    }
+    
+    private double euclidean(int[] point) {
+        return (point[0] * point[0]) + (point[1] * point[1]);
     }
 }
