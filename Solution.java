@@ -1,34 +1,65 @@
+import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.Set;
+import java.util.HashSet;
+
 class Solution {
-    private int[][] grid;
-    private int maxArea = 0, m, n;
-    public int maxAreaOfIsland(int[][] grid) {
-        this.grid = grid;
-        m = grid.length;
-        n = grid[0].length;
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        int n = grid.length;
+        if (grid[0][0] == 1 || grid[n-1][n-1] == 1) return -1;
         
-        for (int i = 0; i<m; i++) {
-            for (int j = 0; j<n; j++) {
-                if (grid[i][j] == 1) {
-                    maxArea = Math.max(maxArea, dfs(i, j));
-                }
+        int pathLength = 0;
+        
+        Queue<Integer> rowQ = new ArrayDeque<>();
+        Queue<Integer> colQ = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+        
+        rowQ.add(0);
+        colQ.add(0);        
+        
+        while (!rowQ.isEmpty()) {
+            int k = rowQ.size();
+            
+            for (int i = 0; i<k; i++) {
+                int row = rowQ.remove();
+                int col = colQ.remove();
+                
+                if (row < 0 || row >= n || col < 0 || col >= n) continue;
+                
+                if (visited.contains(row+""+col) || grid[row][col] == 1) continue;
+                
+                if (row == n-1 && col == n-1) return 1+ pathLength;
+                
+                rowQ.add(row);
+                colQ.add(col+1);
+                
+                rowQ.add(row);
+                colQ.add(col-1);
+                
+                rowQ.add(row+1);
+                colQ.add(col);
+                
+                rowQ.add(row-1);
+                colQ.add(col);
+                
+                rowQ.add(row+1);
+                colQ.add(col+1);
+                
+                rowQ.add(row-1);
+                colQ.add(col+1);
+                
+                rowQ.add(row-1);
+                colQ.add(col-1);
+                
+                rowQ.add(row+1);
+                colQ.add(col-1);
+                
+                visited.add(row+""+col);
             }
+            
+            pathLength++;
         }
-        return maxArea;
-    }
-    
-    private int dfs(int row, int col) {
-        if (row < 0 || row >= m || col < 0 || col >= n) return 0;
         
-        if (grid[row][col] == 0 || grid[row][col] == 9) return 0;
-        
-        int area = 1;
-        grid[row][col] = 9;
-        
-        area += dfs(row, col+1);
-        area += dfs(row, col-1);
-        area += dfs(row+1, col);
-        area += dfs(row-1, col);
-        
-        return area;
+        return -1;
     }
 }
