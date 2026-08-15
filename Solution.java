@@ -1,20 +1,20 @@
-class MyHashSet {
+class MyHashMap {
     
-    boolean[] set;
+    private int[] map;
 
-    public MyHashSet() {
-        set = new boolean[10*10*10*10*10*10];
+    public MyHashMap() {
+        map = new int[(10*10*10*10*10*10)+1];
     }
     
-    public void add(int key) {
-        set[key] = true;
+    public void put(int key, int value) {
+        map[key] = value+1;
+    }
+    
+    public int get(int key) {
+        return map[key]-1;
     }
     
     public void remove(int key) {
-        set[key] = false;
-    }
-    
-    public boolean contains(int key) {
-        return set[key];
+        map[key] = 0;
     }
 }
