@@ -1,65 +1,51 @@
 import java.util.Queue;
 import java.util.ArrayDeque;
-import java.util.Set;
-import java.util.HashSet;
 
 class Solution {
-    public int shortestPathBinaryMatrix(int[][] grid) {
-        int n = grid.length;
-        if (grid[0][0] == 1 || grid[n-1][n-1] == 1) return -1;
-        
-        int pathLength = 0;
-        
-        Queue<Integer> rowQ = new ArrayDeque<>();
-        Queue<Integer> colQ = new ArrayDeque<>();
-        Set<String> visited = new HashSet<>();
-        
-        rowQ.add(0);
-        colQ.add(0);        
-        
-        while (!rowQ.isEmpty()) {
-            int k = rowQ.size();
-            
-            for (int i = 0; i<k; i++) {
-                int row = rowQ.remove();
-                int col = colQ.remove();
-                
-                if (row < 0 || row >= n || col < 0 || col >= n) continue;
-                
-                if (visited.contains(row+""+col) || grid[row][col] == 1) continue;
-                
-                if (row == n-1 && col == n-1) return 1+ pathLength;
-                
-                rowQ.add(row);
-                colQ.add(col+1);
-                
-                rowQ.add(row);
-                colQ.add(col-1);
-                
-                rowQ.add(row+1);
-                colQ.add(col);
-                
-                rowQ.add(row-1);
-                colQ.add(col);
-                
-                rowQ.add(row+1);
-                colQ.add(col+1);
-                
-                rowQ.add(row-1);
-                colQ.add(col+1);
-                
-                rowQ.add(row-1);
-                colQ.add(col-1);
-                
-                rowQ.add(row+1);
-                colQ.add(col-1);
-                
-                visited.add(row+""+col);
+    public int orangesRotting(int[][] grid) {
+        // 0 - empty, 1 - fresh, 2 rotten
+        int m = grid.length;
+        int n = grid[0].length;
+        int time = 0, fresh = 0;
+
+        Queue<String> queue = new ArrayDeque<>();
+
+        for (int i = 0; i<m; i++) {
+            for (int j = 0; j<n; j++) {
+                if (grid[i][j] == 1)
+                    fresh++;
+                if (grid[i][j] == 2)
+                    queue.add(i+" "+j);
             }
-            
-            pathLength++;
         }
-        
-        return -1;
+
+        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        while (!queue.isEmpty() && fresh > 0) {
+            int k = queue.size();
+
+            for (int i = 0; i<k; i++) {
+                String[] index = queue.remove().split(" ");
+
+                int row = Integer.parseInt(index[0]), col = Integer.parseInt(index[1]);
+
+                for (var diff : directions) {
+                    int nextRow = row + diff[0];
+                    int nextCol = col + diff[1];
+
+                    if (nextRow < 0 || nextRow >= m || nextCol < 0 || nextCol >= n) continue;
+
+                    if (grid[nextRow][nextCol] != 1) continue;
+
+                    queue.add(nextRow+" "+nextCol);
+                    grid[nextRow][nextCol] = 2;
+                    fresh--;
+                }
+            }
+
+            time++;
+        }
+
+        return fresh > 0 ? -1 : time;
     }
 }
