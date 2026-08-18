@@ -1,70 +1,57 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-
-class Node {
-    public int val;
-    public List<Node> neighbors;
-    public Node() {
-        val = 0;
-        neighbors = new ArrayList<Node>();
-    }
-    public Node(int _val) {
-        val = _val;
-        neighbors = new ArrayList<Node>();
-    }
-    public Node(int _val, ArrayList<Node> _neighbors) {
-        val = _val;
-        neighbors = _neighbors;
-    }
-}
-
 class Solution {
-    // DFS
-    private Map<Node, Node> map = new HashMap<>();
-    public Node cloneGraph(Node node) {
-        if (node == null) return null;
+    class Node{
+        private int value;
+        private List<Node> req = new ArrayList<>();
 
-        return clone(node);
+        public Node(int value) {
+            this.value = value;
+        }
+
+        public void addReq(Node ment) {
+            req.add(ment);
+        }
     }
 
-    private Node clone(Node node) {
-        if (map.containsKey(node)) return map.get(node);
 
-        Node copy = new Node(node.val);
-        map.put(node, copy);
 
-        for (var adj : node.neighbors)
-            copy.neighbors.add(clone(adj));
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if (prerequisites.length == 0) return true;
 
-        return copy;
+        Map<Integer, Node> map = new HashMap<>();
+
+        for (var ind : prerequisites) {
+            int base = ind[0], top = ind[1];
+            if (!map.containsKey(base))
+                map.put(base, new Node(base));
+            if (!map.containsKey(top))
+                map.put(top, new Node(top));
+
+            Node baseN = map.get(base), topN = map.get(top);
+
+            topN.addReq(baseN);
+        }
+
+        for (var each : map.values()) {
+            if (hasCycle(each, new HashSet<>())) return false;
+        }
+
+        return true;
     }
 
-    //BFS
-    // public Node cloneGraph(Node node) {
-    //     if (node == null) return null;
+    Map<Integer, Boolean> dp = new HashMap<>();
 
-    //     Queue<Node> queue = new ArrayDeque<>();
-    //     Map<Node, Node> map = new HashMap<>();
-    //     Set<Integer> set = new HashSet<>();
-    //     queue.add(node);
+    private boolean hasCycle(Node node, Set<Integer> set) {
+        if (dp.containsKey(node.value)) return dp.get(node.value);
+        if (set.contains(node.value)) return true;
 
-    //     while(!queue.isEmpty()) {
-    //         Node ref = queue.remove();
-    //         Node copy = map.containsKey(ref) ? map.get(ref) : new Node(ref.val);
-    //         map.putIfAbsent(ref, copy);
+        set.add(node.value);
 
-    //         for (var adj : ref.neighbors) {
-    //             map.putIfAbsent(adj, new Node(adj.val));
-    //             copy.neighbors.add(map.get(adj));
-    //             if (!set.contains(adj.val)) {
-    //                 queue.add(adj);
-    //                 set.add(adj.val);
-    //             }
-    //         }
-    //         set.add(copy.val);
-    //     }
-    //     return map.get(node);
-    // }
+        boolean cycle = false;
+        for (var adj : node.req)
+            cycle = cycle || hasCycle(adj, set);
+
+        set.remove(node.value);
+        dp.put(node.value, cycle);
+        return cycle;
+    }
 }
