@@ -1,57 +1,58 @@
 class Solution {
-    class Node{
-        private int value;
-        private List<Node> req = new ArrayList<>();
+    int[] nums;
+    int n;
+    public int rob(int[] nums) {
 
-        public Node(int value) {
+        // dp-memoization -- optimized
+        int oneBefore = nums[0];
+        int twoBefore = 0;
+        int i = 1;
+        while (i < n) {
+            int current = Math.max(oneBefore, twoBefore+nums[i]);
+            twoBefore = oneBefore;
+            oneBefore = current;
+            i++;
+        }
+
+        return oneBefore;
+
+        // this.nums = nums;
+        // n = nums.length;
+
+        // int money = 0;
+        // for (int i = 0; i<n; i++)
+        //     money = Math.max(money, rob(i, 0));
+
+        // return money;
+    }
+
+    class Node {
+        int sumAtPoint;
+        int value;
+
+        public Node(int sumAtPoint, int value) {
+            this.sumAtPoint = sumAtPoint;
             this.value = value;
         }
-
-        public void addReq(Node ment) {
-            req.add(ment);
-        }
     }
 
+    private Map<Integer, Node> map = new HashMap<>();
 
-
-    public boolean canFinish(int numCourses, int[][] prerequisites) {
-        if (prerequisites.length == 0) return true;
-
-        Map<Integer, Node> map = new HashMap<>();
-
-        for (var ind : prerequisites) {
-            int base = ind[0], top = ind[1];
-            if (!map.containsKey(base))
-                map.put(base, new Node(base));
-            if (!map.containsKey(top))
-                map.put(top, new Node(top));
-
-            Node baseN = map.get(base), topN = map.get(top);
-
-            topN.addReq(baseN);
+    private int rob(int i, int robbed) {
+        if (map.containsKey(i)) {
+            Node node = map.get(i);
+            return node.value - node.sumAtPoint + robbed;
         }
+        if (i >= n)
+            return robbed;
 
-        for (var each : map.values()) {
-            if (hasCycle(each, new HashSet<>())) return false;
-        }
+        int maxRobbed = Math.max(rob(i + 2, robbed+nums[i]) , rob(i+1, robbed));
 
-        return true;
-    }
+        if (map.containsKey(i) && map.get(i).value < maxRobbed)
+            map.get(i).value = maxRobbed;
+        else
+            map.put(i, new Node(robbed, maxRobbed));
 
-    Map<Integer, Boolean> dp = new HashMap<>();
-
-    private boolean hasCycle(Node node, Set<Integer> set) {
-        if (dp.containsKey(node.value)) return dp.get(node.value);
-        if (set.contains(node.value)) return true;
-
-        set.add(node.value);
-
-        boolean cycle = false;
-        for (var adj : node.req)
-            cycle = cycle || hasCycle(adj, set);
-
-        set.remove(node.value);
-        dp.put(node.value, cycle);
-        return cycle;
+        return maxRobbed;
     }
 }
