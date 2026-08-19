@@ -1,58 +1,26 @@
+import java.util.Map;
+import java.util.HashMap;
+
 class Solution {
-    int[] nums;
-    int n;
-    public int rob(int[] nums) {
+    int m, n;
+    public int uniquePaths(int m, int n) {
+        this.m = m;
+        this.n = n;
 
-        // dp-memoization -- optimized
-        int oneBefore = nums[0];
-        int twoBefore = 0;
-        int i = 1;
-        while (i < n) {
-            int current = Math.max(oneBefore, twoBefore+nums[i]);
-            twoBefore = oneBefore;
-            oneBefore = current;
-            i++;
-        }
-
-        return oneBefore;
-
-        // this.nums = nums;
-        // n = nums.length;
-
-        // int money = 0;
-        // for (int i = 0; i<n; i++)
-        //     money = Math.max(money, rob(i, 0));
-
-        // return money;
+        return helper(0, 0);
     }
 
-    class Node {
-        int sumAtPoint;
-        int value;
+    private Map<String, Integer> map = new HashMap<>();
 
-        public Node(int sumAtPoint, int value) {
-            this.sumAtPoint = sumAtPoint;
-            this.value = value;
-        }
-    }
+    private int helper(int row, int col) {
+        if (row < 0 || row >= m || col < 0 || col >= n) return 0;
 
-    private Map<Integer, Node> map = new HashMap<>();
+        if (row == m-1 && col == n-1) return 1;
 
-    private int rob(int i, int robbed) {
-        if (map.containsKey(i)) {
-            Node node = map.get(i);
-            return node.value - node.sumAtPoint + robbed;
-        }
-        if (i >= n)
-            return robbed;
+        if (map.containsKey(row+" "+col)) return map.get(row+" "+col);
 
-        int maxRobbed = Math.max(rob(i + 2, robbed+nums[i]) , rob(i+1, robbed));
+        map.put( row+" "+col , (helper(row, col+1) + helper(row+1, col)));
 
-        if (map.containsKey(i) && map.get(i).value < maxRobbed)
-            map.get(i).value = maxRobbed;
-        else
-            map.put(i, new Node(robbed, maxRobbed));
-
-        return maxRobbed;
+        return map.get(row+" "+col);
     }
 }
