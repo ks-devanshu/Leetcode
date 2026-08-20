@@ -1,28 +1,30 @@
-import java.util.Map;
-import java.util.HashMap;
-
 class Solution {
-    int m, n;
-    int[][] grid;
-    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        m = obstacleGrid.length;
-        n = obstacleGrid[0].length;
-        grid = obstacleGrid;
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length(), n = text2.length();
 
-        return helper(0, 0);
-    }
+        int[] row = new int[m];
+        int i = 0;
 
-    private Map<String, Integer> map = new HashMap<>();
+        while (i < n) {
+            int left = 0;
+            int[] temp = new int[m];
+            for (int j = 0; j<m; j++){
+                temp[j] = Math.max(row[j], left);
 
-    private int helper(int row, int col) {
-        if (row < 0 || row >= m || col < 0 || col >= n) return 0;
-        if (grid[row][col] == 1) return 0;
-        if (row == m-1 && col == n-1) return 1;
+                if (text1.charAt(j) == text2.charAt(i)) {
+                    if (j - 1 < 0 ) temp[j] = 1;
+                    else {
+                        temp[j] = row[j-1] + 1;
+                    }
+                }
 
-        if (map.containsKey(row+" "+col)) return map.get(row+" "+col);
+                left = temp[j];
+            }
+            row = temp;
+            i++;
+        }
 
-        map.put(row+" "+col, (helper(row, col+1) + helper(row+1, col)));
-
-        return map.get(row+" "+col);
+        if ((m == 1 || n == 1) && row[m-1] > 0) return 1;
+        return row[m-1];
     }
 }
