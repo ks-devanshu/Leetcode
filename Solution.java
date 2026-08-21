@@ -1,11 +1,16 @@
 class Solution {
-    public int reverseBits(int n) {
-        int out = 0;
-        for (int i = 0; i < 32; i++) {
-            out = (out << 1) | (n & 1);
-            n >>= 1;
+    public int maxSubArray(int[] nums) {
+        int n = nums.length;
+        int i = 0, maxSum = nums[0];
+
+        int currentSum = 0;
+        while (i < n) {
+            currentSum = Math.max(currentSum, 0);
+            currentSum += nums[i];
+            maxSum = Math.max(maxSum, currentSum);
+            i++;
         }
 
-        return out;
+        return maxSum;
     }
 }
