@@ -1,16 +1,22 @@
 class Solution {
-    public int maxSubArray(int[] nums) {
-        int n = nums.length;
-        int i = 0, maxSum = nums[0];
+    public int maxSubarraySumCircular(int[] nums) {
+        int n = nums.length, maxSum = nums[0], minSum = nums[0], currMax = 0, currMin = 0;
+        int i = 0, totalSum = 0;
 
-        int currentSum = 0;
         while (i < n) {
-            currentSum = Math.max(currentSum, 0);
-            currentSum += nums[i];
-            maxSum = Math.max(maxSum, currentSum);
+            totalSum += nums[i];
+            currMax = Math.max(currMax, 0);
+            currMax += nums[i];
+            maxSum = Math.max(maxSum, currMax);
+
+            currMin = Math.min(currMin, 0);
+            currMin += nums[i];
+            minSum = Math.min(minSum, currMin);
             i++;
         }
 
-        return maxSum;
+        if (maxSum < 0) return maxSum;
+
+        return Math.max( maxSum, totalSum - minSum );
     }
 }
