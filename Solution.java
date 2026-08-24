@@ -1,33 +1,21 @@
 class Solution {
-    public int maxTurbulenceSize(int[] arr) {
-        int n = arr.length;
-        if (n == 1) return n;
-
-        int i = 0, j = 1;
-        // < -1 > 1 = 0
-        int maxLen = 1;
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        int n = nums.length;
+        int i = 0, j = 0;
+        Set<Integer> set = new HashSet<>();
         while (j < n) {
-            int prev = arr[j] - arr[j-1];
-            if (prev == 0) {
-                i = j;
-                j++;
-                continue;
-            }
-            if (j+1 >= n) {
-                maxLen = Math.max(maxLen, j-i+1);
-                break;
-            }
-            int next = arr[j+1] - arr[j];
-            if (next == 0 || (next < 0 && prev < 0) || (next > 0 && prev > 0)) {
-                maxLen = Math.max(maxLen, j-i+1);
-                i = j;
-                j++;
-                continue;
+            if ((j-i) > k) {
+                set.remove(nums[i]);
+                i++;
             }
 
-            j++;
+            if (set.contains(nums[j]))
+                return true;
+            else {
+                set.add(nums[j]);
+                j++;
+            }
         }
-
-        return maxLen;
+        return false;
     }
 }
