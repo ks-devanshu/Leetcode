@@ -1,21 +1,25 @@
 class Solution {
-    public int minSubArrayLen(int target, int[] nums) {
-        int n = nums.length;
-        int minLen = Integer.MAX_VALUE;
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        if (n == 0 || n == 1) return n;
 
-        int i = 0, j = 0, sum = 0;
+        int maxLen = Integer.MIN_VALUE;
+        int i = 0, j = 0;
+        Set<Character> set = new HashSet<>();
         while (j < n) {
-            sum += nums[j];
+            if (set.contains(s.charAt(j))) {
+                maxLen = Math.max(maxLen, set.size());
+            }
 
-            while (sum >= target) {
-                minLen = Math.min(minLen, j-i+1);
-                sum -= nums[i];
+            while(set.contains(s.charAt(j))) {
+                set.remove(s.charAt(i));
                 i++;
             }
 
+            set.add(s.charAt(j));
             j++;
         }
 
-        return (minLen == Integer.MAX_VALUE) ? 0 : minLen;
+        return maxLen;
     }
 }
