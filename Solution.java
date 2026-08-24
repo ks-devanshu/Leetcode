@@ -1,25 +1,22 @@
 class Solution {
-    public int lengthOfLongestSubstring(String s) {
+    public int characterReplacement(String s, int k) {
         int n = s.length();
-        if (n == 0 || n == 1) return n;
+        if (k+1 >= n) return n;
 
-        int maxLen = Integer.MIN_VALUE;
-        int i = 0, j = 0;
-        Set<Character> set = new HashSet<>();
+        int[] map = new int[26];
+        int i = 0, j = 0, maxFreq = 0, maxLen = 0;
         while (j < n) {
-            if (set.contains(s.charAt(j))) {
-                maxLen = Math.max(maxLen, set.size());
-            }
+            int index = s.charAt(j)-'A';
+            map[index]++;
+            maxFreq = Math.max(maxFreq, map[index]);
 
-            while(set.contains(s.charAt(j))) {
-                set.remove(s.charAt(i));
+            while (((j-i+1)-maxFreq) > k) {
+                map[s.charAt(i)-'A']--;
                 i++;
             }
-
-            set.add(s.charAt(j));
             j++;
+            maxLen = Math.max(maxLen, (j-i));
         }
-
         return maxLen;
     }
 }
