@@ -1,26 +1,22 @@
 class Solution {
-    public boolean isPalindrome(String s) {
-        int n = s.length();
-        if (n == 1) return true;
-        s = s.toLowerCase().trim();
+    public int[] twoSum(int[] numbers, int target) {
+        int n = numbers.length;
+        int[] result = new int[2];
         int left = 0, right = n-1;
         while (left < right) {
-            char atLeft = s.charAt(left), atRight = s.charAt(right);
-            if ((atLeft < 97 && atLeft > 57) || atLeft < 48 || atLeft > 122) {
+            int sum = numbers[left] + numbers[right];
+            if (sum == target) {
+                result[0] = left+1;
+                result[1] = right+1;
+                break;
+            }
+            else if (sum < target) {
                 left++;
-                continue;
             }
-            if ((atRight < 97 && atRight > 57) || atRight < 48 || atRight > 122) {
+            else {
                 right--;
-                continue;
             }
-            if (atLeft != atRight) {
-                return false;
-            }
-
-            left++;
-            right--;
         }
-        return true;
+        return result;
     }
 }
