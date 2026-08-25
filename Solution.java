@@ -1,19 +1,13 @@
 class Solution {
-    public int removeDuplicates(int[] nums) {
-        int n = nums.length;
-        if (n <= 2) return n;
-
-        int left = 0, right = 0, last = nums[0], lastCount = 0;
-        while (right < n) {
-            if (nums[right] == last) lastCount++;
-            else {
-                last = nums[right];
-                lastCount = 1;
-            }
-            if (left < right) nums[left] = nums[right];
-            if (lastCount <= 2) left++;
-            right++;
+    public int maxArea(int[] height) {
+        int n = height.length;
+        int left = 0, right = n-1;
+        int maxCapacity = 0;
+        while (left < right) {
+            maxCapacity = Math.max(maxCapacity, Math.min(height[left], height[right])*(right-left) );
+            if (height[left] <= height[right]) left++;
+            else right--;
         }
-        return left;
+        return maxCapacity;
     }
 }
