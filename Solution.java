@@ -1,20 +1,22 @@
 class Solution {
-    public int[] productExceptSelf(int[] nums) {
+    public int subarraySum(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
         int n = nums.length;
-        int[] prefix = new int[n], postfix = new int[n];
-        int preProduct = 1, postProduct = 1;
-        for (int i = 0; i<n; i++) {
-            preProduct *= nums[i];
-            prefix[i] = preProduct;
-            postProduct *= nums[n-i-1];
-            postfix[n-i-1] = postProduct;
-        }
+        int i = 0, sum = 0;
+        int count = 0;
+        while (i < n) {
+            sum += nums[i];
+            int look = sum - k;
+            if (map.containsKey(look))
+                count += map.get(look);
 
-        int[] result = new int[n];
-        for (int i = 0; i<n; i++) {
-            result[i] = ( i-1 < 0 ? 1 : prefix[i-1]) * ( i+1 >= n ? 1 : postfix[i+1]);
+            if (map.containsKey(sum))
+                map.replace(sum, map.get(sum)+1);
+            else
+                map.put(sum, 1);
+            i++;
         }
-
-        return result;
+        return count;
     }
 }
