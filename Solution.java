@@ -1,18 +1,20 @@
 class Solution {
-    public int pivotIndex(int[] nums) {
+    public int[] productExceptSelf(int[] nums) {
         int n = nums.length;
-        if (n == 1) return 0;
-        int[] prefix = new int[n];
-        int sum = 0;
+        int[] prefix = new int[n], postfix = new int[n];
+        int preProduct = 1, postProduct = 1;
         for (int i = 0; i<n; i++) {
-            sum += nums[i];
-            prefix[i] = sum;
+            preProduct *= nums[i];
+            prefix[i] = preProduct;
+            postProduct *= nums[n-i-1];
+            postfix[n-i-1] = postProduct;
         }
 
+        int[] result = new int[n];
         for (int i = 0; i<n; i++) {
-            int prev = (i-1) < 0 ? 0 : prefix[i-1];
-            if (prev == (prefix[n-1] - prefix[i])) return i;
+            result[i] = ( i-1 < 0 ? 1 : prefix[i-1]) * ( i+1 >= n ? 1 : postfix[i+1]);
         }
-        return -1;
+
+        return result;
     }
 }
