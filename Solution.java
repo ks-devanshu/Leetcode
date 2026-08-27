@@ -1,4 +1,4 @@
-class Trie {
+class WordDictionary {
 
     class Node {
         char value;
@@ -13,11 +13,11 @@ class Trie {
 
     private Node root;
 
-    public Trie() {
+    public WordDictionary() {
         root = new Node(' ');
     }
 
-    public void insert(String word) {
+    public void addWord(String word) {
         var current = root;
         for (var alpha : word.toCharArray()) {
             current.map.putIfAbsent(alpha, new Node(alpha));
@@ -26,23 +26,23 @@ class Trie {
         current.isEndOfWord = true;
     }
 
-    public boolean search(String word) {
-        var current = root;
-        for (var alpha : word.toCharArray()) {
-            if (!current.map.containsKey(alpha))
-                return false;
+    private boolean search(Node start, String word) {
+        int n = word.length();
+        Node current = start;
+        for (int i = 0; i<n; i++) {
+            char alpha = word.charAt(i);
+            if (alpha == '.') {
+                for (var next : current.map.values()) {
+                    if (search(next, word.substring(i+1, n))) return true;
+                }
+            }
+            if (!current.map.containsKey(alpha)) return false;
             current = current.map.get(alpha);
         }
         return current.isEndOfWord;
     }
 
-    public boolean startsWith(String prefix) {
-        var current = root;
-        for (var alpha : prefix.toCharArray()) {
-            if (!current.map.containsKey(alpha))
-                return false;
-            current = current.map.get(alpha);
-        }
-        return true;
+    public boolean search(String word) {
+        return search(root, word);
     }
 }
