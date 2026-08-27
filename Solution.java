@@ -1,17 +1,48 @@
-class Solution {
-    public int findDuplicate(int[] nums) {
-        int slow = nums[0], fast = nums[0];
-        do {
-            slow = nums[slow];
-            fast = nums[nums[fast]];
-        } while (slow != fast);
+class Trie {
 
-        int slow2 = nums[0];
-        while (slow2 != slow) {
-            slow = nums[slow];
-            slow2 = nums[slow2];
+    class Node {
+        char value;
+        Map<Character, Node> map;
+        boolean isEndOfWord = false;
+
+        public Node(char value) {
+            this.value = value;
+            map = new HashMap<>();
         }
+    }
 
-        return slow2;
+    private Node root;
+
+    public Trie() {
+        root = new Node(' ');
+    }
+
+    public void insert(String word) {
+        var current = root;
+        for (var alpha : word.toCharArray()) {
+            current.map.putIfAbsent(alpha, new Node(alpha));
+            current = current.map.get(alpha);
+        }
+        current.isEndOfWord = true;
+    }
+
+    public boolean search(String word) {
+        var current = root;
+        for (var alpha : word.toCharArray()) {
+            if (!current.map.containsKey(alpha))
+                return false;
+            current = current.map.get(alpha);
+        }
+        return current.isEndOfWord;
+    }
+
+    public boolean startsWith(String prefix) {
+        var current = root;
+        for (var alpha : prefix.toCharArray()) {
+            if (!current.map.containsKey(alpha))
+                return false;
+            current = current.map.get(alpha);
+        }
+        return true;
     }
 }
