@@ -1,21 +1,15 @@
-public class Solution {
-    public ListNode detectCycle(ListNode head) {
-        if (head == null) return head;
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int slow = nums[0], fast = nums[0];
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while (slow != fast);
 
-        ListNode slow = head, slow2 = head, fast = head;
-
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-            if (slow == fast)
-                break;
-        }
-
-        if (fast == null || fast.next == null) return null;
-
+        int slow2 = nums[0];
         while (slow2 != slow) {
-            slow = slow.next;
-            slow2 = slow2.next;
+            slow = nums[slow];
+            slow2 = nums[slow2];
         }
 
         return slow2;
