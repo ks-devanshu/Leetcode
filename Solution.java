@@ -1,48 +1,37 @@
-class WordDictionary {
+class Solution {
+    char[][] board;
+    String word;
+    int m,n;
+    public boolean exist(char[][] board, String word) {
+        this.board = board;
+        this.word = word;
+        m = board.length;
+        n = board[0].length;
 
-    class Node {
-        char value;
-        Map<Character, Node> map;
-        boolean isEndOfWord = false;
-
-        public Node(char value) {
-            this.value = value;
-            map = new HashMap<>();
-        }
-    }
-
-    private Node root;
-
-    public WordDictionary() {
-        root = new Node(' ');
-    }
-
-    public void addWord(String word) {
-        var current = root;
-        for (var alpha : word.toCharArray()) {
-            current.map.putIfAbsent(alpha, new Node(alpha));
-            current = current.map.get(alpha);
-        }
-        current.isEndOfWord = true;
-    }
-
-    private boolean search(Node start, String word) {
-        int n = word.length();
-        Node current = start;
-        for (int i = 0; i<n; i++) {
-            char alpha = word.charAt(i);
-            if (alpha == '.') {
-                for (var next : current.map.values()) {
-                    if (search(next, word.substring(i+1, n))) return true;
+        for (int i = 0; i<m; i++) {
+            for (int j = 0; j<n; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    if (doExist(i, j, new HashSet<>(), 0)) return true;
                 }
             }
-            if (!current.map.containsKey(alpha)) return false;
-            current = current.map.get(alpha);
         }
-        return current.isEndOfWord;
+
+        return false;
     }
 
-    public boolean search(String word) {
-        return search(root, word);
+    private boolean doExist(int row, int col, Set<String> set, int i) {
+        if (row < 0 || row >= m || col < 0 || col >= n) return false;
+        if (set.contains(row+" "+col)) return false;
+        if (i >= word.length()) return false;
+        if (board[row][col] != word.charAt(i)) return false;
+
+        set.add(row+" "+col);
+        if (i+1 >= word.length() && board[row][col] == word.charAt(i)) return true;
+
+        boolean result = doExist(row, col+1, set, i+1) || doExist(row, col-1, set, i+1) || doExist(row+1, col, set, i+1) || doExist(row-1, col, set, i+1);
+
+        set.remove(row+" "+col);
+
+        return result;
     }
 }
