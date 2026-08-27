@@ -1,10 +1,19 @@
 class Solution {
-    public ListNode middleNode(ListNode head) {
-        ListNode slow = head, fast = head;
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
+    public int pairSum(ListNode head) {
+        ListNode node = head;
+        Map<Integer, Integer> map = new HashMap<>();
+        int i = 0, n = 0;
+        while (node != null) {
+            map.put(n, node.val);
+            n++;
+            node = node.next;
         }
-        return slow;
+        int maxSum = 0;
+        while (i < n/2) {
+            maxSum = Math.max(maxSum, map.get(i) + map.get(n-i-1));
+            i++;
+        }
+
+        return maxSum;
     }
 }
