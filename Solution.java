@@ -1,37 +1,48 @@
 class Solution {
-    char[][] board;
-    String word;
-    int m,n;
-    public boolean exist(char[][] board, String word) {
-        this.board = board;
-        this.word = word;
-        m = board.length;
-        n = board[0].length;
-
-        for (int i = 0; i<m; i++) {
-            for (int j = 0; j<n; j++) {
-                if (board[i][j] == word.charAt(0)) {
-                    if (doExist(i, j, new HashSet<>(), 0)) return true;
-                }
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> res = new ArrayList<>();
+        TrieNode root = buildTrie(words);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                dfs(board, i, j, root, res);
             }
         }
-
-        return false;
+        return res;
     }
 
-    private boolean doExist(int row, int col, Set<String> set, int i) {
-        if (row < 0 || row >= m || col < 0 || col >= n) return false;
-        if (set.contains(row+" "+col)) return false;
-        if (i >= word.length()) return false;
-        if (board[row][col] != word.charAt(i)) return false;
+    public void dfs(char[][] board, int i, int j, TrieNode p, List<String> res) {
+        char c = board[i][j];
+        if (c == '#' || p.next[c - 'a'] == null) { return; }
+        p = p.next[c - 'a'];
+        if (p.word != null) {
+            res.add(p.word);
+            p.word = null;
+        }
 
-        set.add(row+" "+col);
-        if (i+1 >= word.length() && board[row][col] == word.charAt(i)) return true;
+        board[i][j] = '#';
+        if (i > 0) dfs(board, i - 1, j ,p, res);
+        if (j > 0) dfs(board, i, j - 1, p, res);
+        if (i < board.length - 1) dfs(board, i + 1, j, p, res);
+        if (j < board[0].length - 1) dfs(board, i, j + 1, p, res);
+        board[i][j] = c;
+    }
 
-        boolean result = doExist(row, col+1, set, i+1) || doExist(row, col-1, set, i+1) || doExist(row+1, col, set, i+1) || doExist(row-1, col, set, i+1);
+    public TrieNode buildTrie(String[] words) {
+        TrieNode root = new TrieNode();
+        for (String w: words) {
+            TrieNode p = root;
+            for (char c: w.toCharArray()) {
+                int i = c - 'a';
+                if (p.next[i] == null) { p.next[i] = new TrieNode(); }
+                p = p.next[i];
+           }
+           p.word = w;
+        }
+        return root;
+    }
 
-        set.remove(row+" "+col);
-
-        return result;
+    class TrieNode {
+        TrieNode[] next = new TrieNode[26];
+        String word;
     }
 }
