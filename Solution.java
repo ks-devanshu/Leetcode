@@ -1,80 +1,59 @@
-class WordFilter {
+class Solution {
+    private class Node {
+        private Node parent;
+        private int rank;
 
-    private class Node{
-        char value;
-        int index;
-        Node parent;
-        Map<Character, Node> children;
-
-        public Node(char value, Node parent) {
-            this.value = value;
-            index = -1;
-            this.parent = parent;
-            children = new HashMap<>();
+        public Node() {
+            parent = this;
+            rank = 1;
         }
     }
 
-    private Node root = new Node(' ', null);
+    private Map<Integer, Node> map = new HashMap<>();
 
-    private void insert(String word, int index) {
-        Node current = root;
-        for (int i = 0; i<word.length(); i++) {
-            char alpha = word.charAt(i);
-            current.children.putIfAbsent(alpha,new Node(alpha, current));
-            current = current.children.get(alpha);
+    private Node findParent(Node node) {
+        Node current = node;
+        while (current.parent != current) {
+            current.parent = current.parent.parent;
+            current = current.parent;
         }
-        current.index = index;
+        return current;
     }
 
-    public WordFilter(String[] words) {
-        for (int i = 0; i<words.length; i++)
-            insert(words[i], i);
-    }
+    private boolean union(Node first, Node second) {
+        Node p1 = findParent(first), p2 = findParent(second);
+        int rankOne = p1.rank, rankTwo = p2.rank;
 
-    private String pref, suff;
-    private Set<Integer> set = new HashSet<>();
-
-    public int f(String pref, String suff) {
-        this.pref = pref;
-        this.suff = suff;
-
-        matchPrefix(0, root);
-
-        int maxIndex = -1;
-
-        for (var index : set) {
-            maxIndex = Math.max(maxIndex, index);
+        if (p1 == p2) {
+            return false;
         }
 
-        return maxIndex;
+        if (rankOne < rankTwo) {
+            p1.parent = p2;
+        }
+        else if (rankOne > rankTwo) {
+            p2.parent = p1;
+        }
+        else {
+            p1.parent = p2;
+            p2.rank++;
+        }
+
+        return true;
     }
 
+    public int[] findRedundantConnection(int[][] edges) {
+        int[] result = new int[2];
 
-    private void matchSuffix(Node node) {
-        for (var child : node.children.values())
-            matchSuffix(child);
-
-        if (node.index > -1) {
-            Node current = node;
-            int i = suff.length() - 1;
-            while (i >= 0 && current.value == suff.charAt(i)) {
-                current = current.parent;
-                i--;
+        for (var edge : edges) {
+            map.putIfAbsent(edge[0], new Node());
+            map.putIfAbsent(edge[1], new Node());
+            if (!union(map.get(edge[0]), map.get(edge[1]))) {
+                result[0] = edge[0];
+                result[1] = edge[1];
             }
-            if (i <= 0)
-                set.add(node.index);
-        }
-    }
-
-
-    private void matchPrefix(int i, Node node) {
-        if (i >= pref.length()) {
-            matchSuffix(node);
-            return;
         }
 
-        char alpha = pref.charAt(i);
-        if (node.children.containsKey(alpha))
-            matchPrefix(i+1, node.children.get(alpha));
+        return result;
     }
 }
