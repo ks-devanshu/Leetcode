@@ -1,18 +1,20 @@
 class Solution {
-    private class Node {
-        private Node parent;
-        private int rank;
+    class Node {
+        int index;
+        Node parent;
+        int rank;
 
-        public Node() {
+        public Node(int index) {
+            this.index = index;
             parent = this;
             rank = 1;
         }
     }
 
-    private Map<Integer, Node> map = new HashMap<>();
+    private Map<Integer, Node> nodemap = new HashMap<>();
 
-    private Node findParent(Node node) {
-        Node current = node;
+    private Node findParent(int node) {
+        Node current = nodemap.get(node);
         while (current.parent != current) {
             current.parent = current.parent.parent;
             current = current.parent;
@@ -20,40 +22,55 @@ class Solution {
         return current;
     }
 
-    private boolean union(Node first, Node second) {
-        Node p1 = findParent(first), p2 = findParent(second);
-        int rankOne = p1.rank, rankTwo = p2.rank;
+    public void merge(int f, int s) {
+        Node first = findParent(f), second = findParent(s);
 
-        if (p1 == p2) {
-            return false;
-        }
-
-        if (rankOne < rankTwo) {
-            p1.parent = p2;
-        }
-        else if (rankOne > rankTwo) {
-            p2.parent = p1;
+        if (first.rank < second.rank) {
+            first.parent = second;
+            second.rank++;
         }
         else {
-            p1.parent = p2;
-            p2.rank++;
+            second.parent = first;
+            first.rank++;
         }
-
-        return true;
     }
 
-    public int[] findRedundantConnection(int[][] edges) {
-        int[] result = new int[2];
+    private Map<String, Integer> mailmap = new HashMap<>();
+    private Map<Integer, List<String>> indexToMail = new HashMap<>();
 
-        for (var edge : edges) {
-            map.putIfAbsent(edge[0], new Node());
-            map.putIfAbsent(edge[1], new Node());
-            if (!union(map.get(edge[0]), map.get(edge[1]))) {
-                result[0] = edge[0];
-                result[1] = edge[1];
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        for (int i = 0; i<accounts.size(); i++) {
+            nodemap.put(i, new Node(i));
+            for (var email : accounts.get(i).subList(1, accounts.get(i).size())) {
+                if (mailmap.containsKey(email)) {
+                    merge(i, mailmap.get(email));
+                }
+                else {
+                    mailmap.put(email, i);
+                }
             }
+            indexToMail.put(i, new ArrayList<>());
+        }
+
+        for (var email : mailmap.keySet()) {
+            var index = findParent(mailmap.get(email)).index;
+            indexToMail.get(index).add(email);
+        }
+
+        List<List<String>> result = new ArrayList<>();
+
+        for (var index : indexToMail.keySet()) {
+            var pre = indexToMail.get(index);
+            if (pre.size() == 0)
+                continue;
+            pre.sort(null);
+            List<String> list = new ArrayList<>();
+            list.add(accounts.get(index).get(0));
+            list.addAll(pre);
+            result.add(list);
         }
 
         return result;
+
     }
 }
