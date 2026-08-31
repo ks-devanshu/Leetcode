@@ -1,76 +1,102 @@
+// class Solution {
+//     private class Node {
+//         private int value;
+//         private int lcs;
+//         private int rank;
+//         private Node parent;
+
+//         public Node(int value) {
+//             this.value = value;
+//             parent = this;
+//             lcs = 1;
+//             rank = 1;
+//         }
+//     }
+//     private Map<Integer, Node> nodemap = new HashMap<>();
+
+//     private Node findParent(int n) {
+//         Node node = nodemap.get(n);
+//         while (node.parent != node) {
+//             node.parent = node.parent.parent;
+//             node = node.parent;
+//         }
+
+//         return node;
+//     }
+
+//     private void union(int a, int b) {
+//         Node first = findParent(a), second = findParent(b);
+
+//         if (first == second) return;
+
+//         if (first.rank > second.rank) {
+//             second.parent = first;
+//             first.lcs++;
+//             first.rank++;
+//         }
+//         else {
+//             first.parent = second;
+//             second.lcs++;
+//             second.rank++;
+//         }
+//     }
+
+//     public int longestConsecutive(int[] nums) {
+//         if (nums.length == 0 || nums.length == 1) return nums.length;
+//         for (int num : nums) {
+//             nodemap.putIfAbsent(num, new Node(num));
+//         }
+
+//         for (int num : nums) {
+//             if (nodemap.containsKey(num-1))
+//                 union(num, num-1);
+//             if (nodemap.containsKey(num+1))
+//                 union(num, num+1);
+//         }
+
+//         int max = 0;
+//         Map<Integer, Integer> map = new HashMap<>();
+//         Set<Integer> visited = new HashSet<>();
+
+//         for (var num : nums) {
+//             if (visited.contains(num)) continue;
+
+//             int parent = findParent(num).value;
+//             if (map.containsKey(parent))
+//                 map.replace(parent, map.get(parent)+1);
+//             else
+//                 map.put(parent, 1);
+//             max = Math.max(max, map.get(parent));
+//             visited.add(num);
+//         }
+
+//         return max;
+//     }
+// }
+
+// Optimal Solution without union find
 class Solution {
-    class Node {
-        int index;
-        Node parent;
-        int rank;
+    public int longestConsecutive(int[] nums) {
+        int n = nums.length;
+        if (n == 0 || n == 1) return n;
 
-        public Node(int index) {
-            this.index = index;
-            parent = this;
-            rank = 1;
-        }
-    }
+        int maxLength = 0;
 
-    private Map<Integer, Node> nodemap = new HashMap<>();
+        Set<Integer> set = new HashSet<>();
+        for (var num : nums)
+            set.add(num);
 
-    private Node findParent(int node) {
-        Node current = nodemap.get(node);
-        while (current.parent != current) {
-            current.parent = current.parent.parent;
-            current = current.parent;
-        }
-        return current;
-    }
+        for (var num : set) {
+            if (set.contains(num-1)) continue;
 
-    public void merge(int f, int s) {
-        Node first = findParent(f), second = findParent(s);
-
-        if (first.rank < second.rank) {
-            first.parent = second;
-            second.rank++;
-        }
-        else {
-            second.parent = first;
-            first.rank++;
-        }
-    }
-
-    private Map<String, Integer> mailmap = new HashMap<>();
-    private Map<Integer, List<String>> indexToMail = new HashMap<>();
-
-    public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        for (int i = 0; i<accounts.size(); i++) {
-            nodemap.put(i, new Node(i));
-            for (var email : accounts.get(i).subList(1, accounts.get(i).size())) {
-                if (mailmap.containsKey(email)) {
-                    merge(i, mailmap.get(email));
-                }
-                else {
-                    mailmap.put(email, i);
-                }
+            int length = 0;
+            while (set.contains(num+length)) {
+                length++;
             }
-            indexToMail.put(i, new ArrayList<>());
+
+            maxLength = Math.max(maxLength, length);
         }
 
-        for (var email : mailmap.keySet()) {
-            var index = findParent(mailmap.get(email)).index;
-            indexToMail.get(index).add(email);
-        }
-
-        List<List<String>> result = new ArrayList<>();
-
-        for (var index : indexToMail.keySet()) {
-            var pre = indexToMail.get(index);
-            if (pre.size() == 0)
-                continue;
-            pre.sort(null);
-            List<String> list = new ArrayList<>();
-            list.add(accounts.get(index).get(0));
-            list.addAll(pre);
-            result.add(list);
-        }
-
-        return result;
-
+        return maxLength;
     }
 }
