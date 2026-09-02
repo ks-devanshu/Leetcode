@@ -1,54 +1,69 @@
-class Solution {
-    class Node {
-        int rank;
-        Node parent;
-
-        public Node() {
-            parent = this;
-            rank = 1;
-        }
+class NumArray {
+    private class Node {
+        private int sum, min, max;
+        private Node left, right;
     }
 
-    Map<Integer, Node> nodemap = new HashMap<>();
+    private int[] nums;
+    private Node root;
 
-    private Node findParent(int value) {
-        Node node = nodemap.get(value);
-        while (node.parent != node) {
-            node.parent = node.parent.parent;
-            node = node.parent;
+    private Node build(int l, int r) {
+        if (l == r) {
+            Node node = new Node();
+            node.sum = nums[l];
+            node.min = node.max = l;
+            return node;
         }
-        return node;
+
+        Node parent = new Node();
+        parent.min = l;
+        parent.max = r;
+        int mid = (l+r) / 2;
+        parent.left = build(l, mid);
+        parent.right = build(mid+1, r);
+        parent.sum = parent.left.sum + parent.right.sum;
+
+        return parent;
     }
 
-    private void union(int f, int s) {
-        Node first = findParent(f), second = findParent(s);
-
-        if (first == second) return;
-
-        if (first.rank < second.rank) {
-            first.parent = second;
-            second.rank++;
-        }
-        else {
-            second.parent = first;
-            first.rank++;
-        }
+    public NumArray(int[] nums) {
+        this.nums = nums;
+        root = build(0, nums.length-1);
     }
 
-    int countConnected(int V, ArrayList<ArrayList<Integer>> edges) {
-        for (int i = 0; i < V; i++) {
-            nodemap.put(i, new Node());
+    public void update(int index, int val) {
+        update(root, index, val);
+    }
+
+    private void update(Node node, int index, int value) {
+        if (node.min == index && node.max == index) {
+            node.sum = value;
+            return;
         }
 
-        for (var edge : edges) {
-            union(edge.get(0), edge.get(1));
-        }
+        int mid = (node.min + node.max) / 2;
+        if (index > mid)
+            update(node.right, index, value);
+        else
+            update(node.left, index, value);
 
-        int count = 0;
-        for (var node : nodemap.values())
-            if (node.parent == node)
-                count++;
+        node.sum = node.left.sum + node.right.sum;
+    }
 
-        return count;
+    public int sumRange(int left, int right) {
+        return getSum(root, left, right);
+    }
+
+    private int getSum(Node node, int left, int right) {
+        if (left == node.min && node.max == right)
+            return node.sum;
+
+        int mid = (node.min + node.max) / 2;
+        if (left > mid)
+            return getSum(node.right, left, right);
+        else if (right <= mid)
+            return getSum(node.left, left, right);
+        else
+            return (getSum(node.left, left, mid) + getSum(node.right, mid+1, right));
     }
 }
