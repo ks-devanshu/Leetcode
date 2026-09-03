@@ -1,37 +1,56 @@
-class Solution {
-    public int[][] reconstructQueue(int[][] people) {
-        int m = people.length;
-        Arrays.sort(people, Comparator.comparingInt((int[] x) -> x[0]).thenComparingInt(x -> x[1]));
+class MyCalendar {
 
-        int[][] result = new int[m][2];
-
-        for (int i = 0; i<m; i++) {
-            result[i][0] = -1;
-        }
-
-        for (int i = 0; i<m; i++) {
-            int count = people[i][1];
-            int j = 0;
-            while (j < m) {
-                if (result[j][0] > -1) {
-                    if (result[j][0] == people[i][0])
-                        count--;
-                    j++;
-                    continue;
-                }
-
-                if (count == 0) {
-                    result[j] = people[i];
-                    System.out.println(j+" , "+Arrays.toString(result[j]));
-                    break;
-                }
-                else {
-                    count--;
-                    j++;
-                }
-            }
-        }
-
-        return result;
+    private class Node {
+        private int start, end;
+        private Node left, right;
     }
+
+    private Node root;
+
+    public MyCalendar() {
+
+    }
+
+    public boolean book(int startTime, int endTime) {
+        if (root == null) {
+            root = new Node();
+            root.start = startTime;
+            root.end = endTime;
+            return true;
+        }
+
+        return isSafe(root, startTime, endTime);
+    }
+
+    private boolean isSafe(Node node, int st, int en) {
+        if (node == null)
+            return true;
+
+        if (st >= node.end) {
+            if (isSafe(node.right, st, en)) {
+                if (node.right == null) {
+                    node.right = new Node();
+                    node.right.start = st;
+                    node.right.end = en;
+                }
+                return true;
+            }
+            return false;
+        }
+        else if (en <= node.start) {
+            if (isSafe(node.left, st, en)) {
+                if (node.left == null) {
+                    node.left = new Node();
+                    node.left.start = st;
+                    node.left.end = en;
+                }
+                return true;
+            }
+            return false;
+        }
+        else
+            return false;
+    }
+
+
 }
