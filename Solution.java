@@ -1,20 +1,19 @@
 class Solution {
-    public int firstStableIndex(int[] nums, int k) {
+    public int lengthOfLIS(int[] nums) {
         int n = nums.length;
-        int[] premin = new int[n];
-        int min = Integer.MAX_VALUE;
+        int maxLength = 1;
+
+        Map<Integer, Integer> map = new HashMap<>();
         for (int i = n-1; i>=0; i--) {
-            min = Math.min(min, nums[i]);
-            premin[i] = min;
+            int localMax = 1;
+            for (int j = i+1; j<n; j++) {
+                if (nums[j] > nums[i])
+                    localMax = Math.max(localMax, 1+map.get(j));
+            }
+            map.put(i, localMax);
+            maxLength = Math.max(maxLength, localMax);
         }
 
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i<n; i++) {
-            max = Math.max(max, nums[i]);
-            if ((max - premin[i]) <= k)
-                return i;
-        }
-
-        return -1;
+        return maxLength;
     }
 }
