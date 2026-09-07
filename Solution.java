@@ -12,22 +12,35 @@ class TreeNode {
 }
 
 class Solution {
-    public List<Integer> preorderTraversal(TreeNode root) {
-        List<Integer> preOrder = new ArrayList<>();
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
+        Stack<Boolean> visit = new Stack<>();
         TreeNode current = root;
+        stack.push(root);
+        visit.push(false);
         
-         while (current != null || !stack.isEmpty()) {
-         	if (current != null) {
-         		preOrder.add(current.val);
-         		stack.push(current.right);
-         		current = current.left;
-         	}
-         	else {
-         		current = stack.pop();
-         	}
-         }
-         
-         return preOrder;
+        while (!stack.isEmpty()) {
+        	current = stack.pop();
+        	var visited = visit.pop();
+        	
+        	if (current == null) {
+        		continue;
+        	}
+        	
+        	if (!visited) {
+        		stack.push(current);
+        		visit.push(true);
+        		stack.push(current.right);
+        		visit.push(false);
+        		stack.push(current.left);
+        		visit.push(false);
+        	}
+        	else {
+        		result.add(current.val);
+        	}
+        }
+        
+        return result;
     }
 }
