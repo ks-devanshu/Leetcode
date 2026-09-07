@@ -1,4 +1,4 @@
-public class TreeNode {
+class TreeNode {
 	int val;
 	TreeNode left;
 	TreeNode right;
@@ -11,34 +11,23 @@ public class TreeNode {
 	}
 }
 
-class BSTIterator {
-	
-	private List<Integer> inorder = new ArrayList<>();
-	private int pointer = 0, count;
-
-    public BSTIterator(TreeNode root) {
+class Solution {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> preOrder = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         TreeNode current = root;
         
-        while (current != null || !stack.isEmpty()) {
-        	if (current != null) {
-        		stack.push(current);
-        		current = current.left;
-        	}
-        	else {
-        		var parent = stack.pop();
-        		inorder.add(parent.val);
-        		count++;
-        		current = parent.right;
-        	}
-        }
-    }
-    
-    public int next() {
-        return inorder.get(pointer++);
-    }
-    
-    public boolean hasNext() {
-        return pointer < count;
+         while (current != null || !stack.isEmpty()) {
+         	if (current != null) {
+         		preOrder.add(current.val);
+         		stack.push(current.right);
+         		current = current.left;
+         	}
+         	else {
+         		current = stack.pop();
+         	}
+         }
+         
+         return preOrder;
     }
 }
