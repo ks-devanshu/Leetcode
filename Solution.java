@@ -1,33 +1,29 @@
 class Solution {
-	
-	private class Node{
-		int capital, profit;
-		public Node(int capital, int profit) {
-			this.capital = capital;
-			this.profit = profit;
-		}
-	}
-	
-    public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
-        Queue<Node> max = new PriorityQueue<>(Comparator.comparingInt(x -> x.profit));
-        Queue<Node> min = new PriorityQueue<>(Comparator.comparingInt(x -> x.capital));
+	int[] nums;
+	int n;
+	List<List<Integer>> subsets = new ArrayList<>();
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
         
-        for (int i = 0; i<profits.length; i++)
-        	min.add(new Node(capital[i], profits[i]));
+        Arrays.sort(nums);
+        this.nums = nums;
+        n = nums.length;
+
+        helper(0, new ArrayList<>());
         
-        while (k-- > 0) {
-        	while (min.size() > 0 && min.peek().capital <= w) {
-        		var top = min.poll();
-        		top.profit *= -1;
-        		max.add(top);
-        	}
-        	
-        	if (max.size() == 0)
-        		break;
-        	
-        	w += (-1) * max.poll().profit;
-        }
-        
-        return w;
+        return subsets;
+    }
+    
+    private void helper(int i, List<Integer> current) {
+    	if (i >= n) {
+    		subsets.add(new ArrayList<>(current));
+    		return;
+    	}
+    	
+    	current.add(nums[i]);
+    	helper(i+1, current);
+    	
+    	int end = current.remove(current.size()-1);
+    	while (i+1 < n && nums[i] == nums[i+1]) i++;
+    	helper(i+1, current);
     }
 }
