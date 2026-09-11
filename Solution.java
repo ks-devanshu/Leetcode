@@ -1,44 +1,32 @@
 class Solution {
-	int k;
-	String digits;
-	List<String> result = new ArrayList<>();
 	
-	Map<Character, String> map = new HashMap<>();
+	int[] nums;
+	int n;
 	
-    public List<String> letterCombinations(String digits) {
-        k = digits.length();
-        this.digits = digits;
-        populateMap();
+    public List<List<Integer>> permute(int[] nums) {
+        this.nums = nums;
+        n = nums.length;
         
-        helper(0, new ArrayList<>());
+        return helper(0);
         
+    }
+    
+    private List<List<Integer>> helper(int i) {
+    	if (i >= n) {
+    		List<List<Integer>> list = new ArrayList<>();
+    		list.add(new ArrayList<>());
+    		return list;
+    	}
+    	
+    	List<List<Integer>> result = new ArrayList<>();
+    	var perms = helper(i+1);
+    	for (var each : perms) {
+    		for (int j = 0; j<each.size()+1; j++) {
+    			var copy = new ArrayList<>(each);
+    			copy.add(j, nums[i]);
+    			result.add(copy);
+    		}
+    	}
         return result;
     }
-    
-    private void helper(int i, List<String> current) {
-    	if (i >= k) {
-    		result.add(String.join("", current));
-    		return;
-    	}
-    	
-    	String mapping = map.get(digits.charAt(i));
-    	
-    	for (var alpha : mapping.toCharArray()) {
-    		current.add(alpha+"");
-    		helper(i+1, current);
-    		current.remove(current.size() - 1);
-    	}
-    	
-    }
-    
-    private void populateMap() {
-    	map.put('2', "abc");
-    	map.put('3', "def");
-    	map.put('4', "ghi");
-		map.put('5', "jkl");
-		map.put('6', "nmo");
-    	map.put('7', "pqrs");
-    	map.put('8', "tuv");
-    	map.put('9', "wxyz");    	    	    	    	    	    	    	
-    }
-}
+}	
