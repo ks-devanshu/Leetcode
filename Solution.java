@@ -1,29 +1,22 @@
 class Solution {
-	int[] nums;
-	int n;
-	List<List<Integer>> subsets = new ArrayList<>();
-    public List<List<Integer>> subsetsWithDup(int[] nums) {
-        
-        Arrays.sort(nums);
-        this.nums = nums;
-        n = nums.length;
-
-        helper(0, new ArrayList<>());
-        
-        return subsets;
+	List<List<Integer>> result = new ArrayList<>();
+    public List<List<Integer>> combine(int n, int k) {
+        helper(1, n, k, new ArrayList<>());
+        return result;
     }
     
-    private void helper(int i, List<Integer> current) {
-    	if (i >= n) {
-    		subsets.add(new ArrayList<>(current));
+    public void helper(int i, int n, int k, List<Integer> current) {
+    	if (current.size() == k) {
+    		result.add(new ArrayList<>(current));
     		return;
     	}
+    	if (i > n)
+    		return;
     	
-    	current.add(nums[i]);
-    	helper(i+1, current);
-    	
-    	int end = current.remove(current.size()-1);
-    	while (i+1 < n && nums[i] == nums[i+1]) i++;
-    	helper(i+1, current);
+    	for (int j = i; j<=n; j++) {
+    		current.add(j);
+    		helper(j+1, n, k, current);
+    		current.remove(current.size() - 1);
+    	}
     }
 }
