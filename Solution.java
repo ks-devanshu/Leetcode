@@ -1,41 +1,88 @@
 class Solution {
-	int[] nums;
-	int n;
 	
-	List<List<Integer>> result = new ArrayList<>();
-	Map<Integer, Integer> map = new HashMap<>();
+	class Edge{
+		Node source, dest;
+		int weight;
+		
+		public Edge(Node source, Node dest, int weight) {
+			this.source = source;
+			this.dest = dest;
+			this.weight = weight;
+		}
+	}
 	
-    public List<List<Integer>> permuteUnique(int[] nums) {
-        this.nums = nums;
-        n = nums.length;
-        
-        for (var num : nums) {
-        	if(map.containsKey(num))
-        		map.replace(num, map.get(num)+1);
-        	else
-        		map.put(num, 1);
-        }
-
-        helper(new ArrayList<>());
-        
-        return result;
-    }
-    
-    private void helper(List<Integer> list) {
-    	if (list.size() >= n) {
-    		result.add(new ArrayList<>(list));
-    		return;
-    	}
-    	
-    	for (var next : map.keySet()) {
-    		if (map.get(next) > 0) {
-    			list.add(next);
-    			map.replace(next, map.get(next)-1);
-    			helper(list);
-    			
-    			list.remove(list.size()-1);
-    			map.replace(next, map.get(next)+1);
-    		}
-    	}
-    }
+	class Node {
+		int value;
+		List<Edge> edges;
+		
+		public Node(int value) {
+			this.value = value;
+			edges = new ArrayList<>();
+		}
+		
+		public void addEdge(Node dest, int weight) {
+			edges.add(new Edge(this, dest, weight));
+		}
+		
+		@Override
+		public String toString() {
+			return value+"";
+		}
+	}
+	
+	Map<Integer, Node> map = new HashMap<>();
+	
+	class Pair {
+		Node node;
+		int distance;
+		
+		public Pair(Node node, int distance) {
+			this.node = node;
+			this.distance = distance;
+		}
+	}
+	
+	public int networkDelayTime(int[][] times, int n, int k) {
+		for (int i = 1; i<=n; i++)
+			map.put(i, new Node(i));
+		
+		for (var time : times) {
+			Node source = map.get(time[0]);
+			Node dest = map.get(time[1]);
+			int weight = time[2];
+			
+			source.addEdge(dest, weight);
+		}
+		
+		Map<Integer,Integer> shortest = new HashMap<>();
+		
+		shortest.put(k, 0);
+		for (int i = 1; i<=n; i++)
+			shortest.putIfAbsent(i, Integer.MAX_VALUE);
+		
+		Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x.distance));
+		queue.add(new Pair(map.get(k), shortest.get(k)));
+		
+		Set<Node> visited = new HashSet<>();
+		
+		while(!queue.isEmpty()) {
+			Node current = queue.poll().node;
+			if (visited.contains(current))
+				continue;
+			for (var edge : current.edges) {
+				shortest.replace(edge.dest.value, Math.min(shortest.get(edge.dest.value), shortest.get(current.value)+edge.weight));
+				queue.add(new Pair(map.get(edge.dest.value), shortest.get(edge.dest.value)));
+			}
+			visited.add(current);
+		}
+		
+		if (visited.size() < n)
+			return -1;
+		
+		int max = 0;
+		for (int distance : shortest.values())
+			max = Math.max(max, distance);
+		
+		return max;
+   }
 }
