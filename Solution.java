@@ -1,88 +1,39 @@
 class Solution {
-	
-	class Edge{
-		Node source, dest;
-		int weight;
-		
-		public Edge(Node source, Node dest, int weight) {
-			this.source = source;
-			this.dest = dest;
-			this.weight = weight;
-		}
-	}
-	
-	class Node {
-		int value;
-		List<Edge> edges;
-		
-		public Node(int value) {
-			this.value = value;
-			edges = new ArrayList<>();
-		}
-		
-		public void addEdge(Node dest, int weight) {
-			edges.add(new Edge(this, dest, weight));
-		}
-		
-		@Override
-		public String toString() {
-			return value+"";
-		}
-	}
-	
-	Map<Integer, Node> map = new HashMap<>();
-	
-	class Pair {
-		Node node;
-		int distance;
-		
-		public Pair(Node node, int distance) {
-			this.node = node;
-			this.distance = distance;
-		}
-	}
-	
-	public int networkDelayTime(int[][] times, int n, int k) {
-		for (int i = 1; i<=n; i++)
-			map.put(i, new Node(i));
-		
-		for (var time : times) {
-			Node source = map.get(time[0]);
-			Node dest = map.get(time[1]);
-			int weight = time[2];
-			
-			source.addEdge(dest, weight);
-		}
-		
-		Map<Integer,Integer> shortest = new HashMap<>();
-		
-		shortest.put(k, 0);
-		for (int i = 1; i<=n; i++)
-			shortest.putIfAbsent(i, Integer.MAX_VALUE);
-		
-		Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x.distance));
-		queue.add(new Pair(map.get(k), shortest.get(k)));
-		
-		Set<Node> visited = new HashSet<>();
-		
-		while(!queue.isEmpty()) {
-			Node current = queue.poll().node;
-			if (visited.contains(current))
-				continue;
-			for (var edge : current.edges) {
-				shortest.replace(edge.dest.value, Math.min(shortest.get(edge.dest.value), shortest.get(current.value)+edge.weight));
-				queue.add(new Pair(map.get(edge.dest.value), shortest.get(edge.dest.value)));
-			}
-			visited.add(current);
-		}
-		
-		if (visited.size() < n)
-			return -1;
-		
-		int max = 0;
-		for (int distance : shortest.values())
-			max = Math.max(max, distance);
-		
-		return max;
-   }
+    class Pair {
+    	int i, j, value;
+    	
+    	public Pair(int i, int j, int value) {
+    		this.i = i;
+    		this.j = j;
+    		this.value = value;
+    	}
+    }
+    
+    public int swimInWater(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length; 
+        
+        Map<String, Integer> map = new HashMap<>();
+        Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingInt(x->x.value));
+        
+        queue.add(new Pair(0, 0, grid[0][0]));
+        
+        while(!queue.isEmpty()) {
+        	Pair current = queue.poll();
+        	int row = current.i, col = current.j, value = current.value;
+        	map.put(row+" "+col, value);
+            if (row == m-1 && col == n-1) break;
+        	
+        	if (col-1 >= 0 && !map.containsKey(row+" "+(col-1)))
+        		queue.add(new Pair(row, col-1, Math.max(value, grid[row][col-1])));
+        	if (col+1 < n && !map.containsKey(row+" "+(col+1)))
+        		queue.add(new Pair(row, col+1, Math.max(value, grid[row][col+1])));
+			if (row-1 >= 0 && !map.containsKey((row-1)+" "+col))
+        		queue.add(new Pair(row-1, col, Math.max(value, grid[row-1][col])));
+			if (row+1 < m && !map.containsKey((row+1)+" "+col))
+        		queue.add(new Pair(row+1, col, Math.max(value, grid[row+1][col])));
+        }
+        
+        return map.get((m-1)+" "+(n-1));
+    }    
 }
