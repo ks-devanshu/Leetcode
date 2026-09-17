@@ -1,39 +1,47 @@
 class Solution {
-    class Pair {
-    	int i, j, value;
-    	
-    	public Pair(int i, int j, int value) {
-    		this.i = i;
-    		this.j = j;
-    		this.value = value;
-    	}
-    }
-    
-    public int swimInWater(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length; 
+	class Pair {
+		int node;
+		double prob;
+		
+		public Pair(int node, double prob) {
+			this.node = node;
+			this.prob = prob;
+		}
+	}
+	
+    public double maxProbability(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
+        Map<Integer, Set<Pair>> map = new HashMap<>();
         
-        Map<String, Integer> map = new HashMap<>();
-        Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingInt(x->x.value));
+        for (int i = 0; i<n; i++)
+        	map.put(i, new HashSet<>());
         
-        queue.add(new Pair(0, 0, grid[0][0]));
-        
-        while(!queue.isEmpty()) {
-        	Pair current = queue.poll();
-        	int row = current.i, col = current.j, value = current.value;
-        	map.put(row+" "+col, value);
-            if (row == m-1 && col == n-1) break;
-        	
-        	if (col-1 >= 0 && !map.containsKey(row+" "+(col-1)))
-        		queue.add(new Pair(row, col-1, Math.max(value, grid[row][col-1])));
-        	if (col+1 < n && !map.containsKey(row+" "+(col+1)))
-        		queue.add(new Pair(row, col+1, Math.max(value, grid[row][col+1])));
-			if (row-1 >= 0 && !map.containsKey((row-1)+" "+col))
-        		queue.add(new Pair(row-1, col, Math.max(value, grid[row-1][col])));
-			if (row+1 < m && !map.containsKey((row+1)+" "+col))
-        		queue.add(new Pair(row+1, col, Math.max(value, grid[row+1][col])));
+        int i = 0;
+        for (var edge : edges) {
+        	map.get(edge[0]).add(new Pair(edge[1], succProb[i]));
+        	map.get(edge[1]).add(new Pair(edge[0], succProb[i]));
+        	i++;
         }
         
-        return map.get((m-1)+" "+(n-1));
-    }    
+        Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingDouble(x -> x.prob ));
+        queue.add(new Pair(start_node, (double) -1));
+        Set<Integer> set = new HashSet<>();
+        
+        while(!queue.isEmpty()) {
+        	var current = queue.poll();
+        	if (set.contains(current.node))
+        		continue;
+        	
+        	set.add(current.node);
+        	
+        	if (current.node == end_node)
+        		return (-1)*current.prob;
+        	
+        	for (var next : map.get(current.node)) {
+        		next.prob = Math.max((-1)*next.prob, current.prob*next.prob);
+        		queue.add(next);
+        	}
+        }
+        
+        return 0;
+    }
 }
