@@ -1,47 +1,42 @@
 class Solution {
-	class Pair {
-		int node;
-		double prob;
+	private int[][] points;
+	private class Edge{
+		int i, j;
+		int distance;
 		
-		public Pair(int node, double prob) {
-			this.node = node;
-			this.prob = prob;
+		public Edge(int i, int j) {
+			this.i = i;
+			this.j = j;
+			distance = Math.abs(points[i][0]-points[j][0])+Math.abs(points[i][1]-points[j][1]);
 		}
 	}
 	
-    public double maxProbability(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
-        Map<Integer, Set<Pair>> map = new HashMap<>();
+    public int minCostConnectPoints(int[][] points) {
+    	this.points = points;
         
-        for (int i = 0; i<n; i++)
-        	map.put(i, new HashSet<>());
+        Queue<Edge> queue = new PriorityQueue<>(Comparator.comparingInt(x -> x.distance));
         
-        int i = 0;
-        for (var edge : edges) {
-        	map.get(edge[0]).add(new Pair(edge[1], succProb[i]));
-        	map.get(edge[1]).add(new Pair(edge[0], succProb[i]));
-        	i++;
-        }
+        int n = points.length;
         
-        Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingDouble(x -> x.prob ));
-        queue.add(new Pair(start_node, (double) -1));
-        Set<Integer> set = new HashSet<>();
+        for (int i = 1; i<n; i++)
+        	queue.add(new Edge(0, i));
         
-        while(!queue.isEmpty()) {
+        int result = 0;
+        Set<String> visited = new HashSet<>();
+        visited.add(Arrays.toString(points[0]));
+        
+        while (!queue.isEmpty()) {
         	var current = queue.poll();
-        	if (set.contains(current.node))
+        	if (visited.contains(Arrays.toString(points[current.j])))
         		continue;
-        	
-        	set.add(current.node);
-        	
-        	if (current.node == end_node)
-        		return (-1)*current.prob;
-        	
-        	for (var next : map.get(current.node)) {
-        		next.prob = Math.max((-1)*next.prob, current.prob*next.prob);
-        		queue.add(next);
+
+        	result += current.distance;
+        	for (int i = 0; i<n; i++) {
+        		queue.add(new Edge(current.j, i));
         	}
+        	visited.add(Arrays.toString(points[current.j]));
         }
         
-        return 0;
+        return result;
     }
 }
