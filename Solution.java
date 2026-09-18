@@ -1,23 +1,25 @@
 class Solution {
-    public int strStr(String haystack, String needle) {
-        int n = haystack.length(), m = needle.length();
-        if (m > n) return -1;
+    public boolean isAnagram(String s, String t) {
+        int n = s.length(), m = t.length();
+        if (n != m)
+            return false;
+        
+        Map<Character, Integer> map = new HashMap<>();
 
-        int i = 0, j = 0;
-        while (i < n) {
-            int temp = i;
-            while(i< n && j < m && haystack.charAt(i) == needle.charAt(j)) {
-                j++;
-                i++;
-            }
-            if (j == m) {
-                return i-j;
-            }
-
-            i = temp+1;
-            j = 0;
+        for (var alpha : s.toCharArray()) {
+            if (map.containsKey(alpha))
+                map.replace(alpha, map.get(alpha)+1);
+            else
+                map.put(alpha, 1);
+        }
+        for (var alpha : t.toCharArray()) {
+            if (map.containsKey(alpha) && map.get(alpha) > 0)
+                map.replace(alpha, map.get(alpha)-1);
+            else
+                return false;
         }
 
-        return -1;
+        return true;
+
     }
 }
