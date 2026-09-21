@@ -13,54 +13,39 @@ class Solution {
 		from.next.add(to);
 	}
 	
-	private Set<Integer> visited = new HashSet<>();
-	private Stack<Integer> stack = new Stack<>();
-	
-	private boolean topOrder(Node node, Set<Integer> prev) {
-		if (prev.contains(node.value))
-			return false;
-		if (visited.contains(node.value))
+	private boolean dfs(Node node, Node target) {
+		if (node.value == target.value)
 			return true;
 		
-		prev.add(node.value);
 		for (var each : node.next)
-			if (!topOrder(each, prev))
-				return false;
+			if (dfs(each, target))
+				return true;
 		
-        prev.remove(node.value);
-		stack.push(node.value);
-		visited.add(node.value);
-		
-		return true;
+		return false;
 	}
 	
 	private Map<Integer, Node> map = new HashMap<>();
 	
-    public int[] findOrder(int n, int[][] pre) {
-        int[] result = new int[n];
-        
-        for (int i = 0; i<n; i++) {
-        	map.put(i, new Node(i));
-        	result[i] = i;
-        }
+    public List<Boolean> checkIfPrerequisite(int n, int[][] pre, int[][] queries) {
+        List<Boolean> result = new ArrayList<>();
+        for (int i = 0; i<queries.length; i++)
+        	result.add(false);
         
         if (pre.length == 0)
         	return result;
         
-        for (var req : pre) {
-        	addEdge(map.get(req[1]), map.get(req[0]));
-        }
+        for (int i = 0; i<n; i++)
+        	map.put(i, new Node(i));
         
-        for (int i = 0; i<n; i++) {
-        	if (!topOrder(map.get(i), new HashSet<>())) {
-        		int[] impossible = new int[0];
-        		return impossible;
-        	}
-        }
+        for (var req : pre)
+        	addEdge(map.get(req[1]), map.get(req[0]));
         
         int i = 0;
-        while (!stack.isEmpty())
-        	result[i++] = stack.pop();
+        for (var query : queries) {
+        	if (dfs(map.get(query[1]), map.get(query[0])))
+        		result.set(i, true);
+        	i++;
+        }
         
         return result;
     }
