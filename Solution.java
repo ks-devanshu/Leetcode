@@ -1,7 +1,7 @@
 class Solution {
-	private class Node {
-		private int value;
-		private Set<Node> next;
+	class Node {
+		int value;
+		Set<Node> next;
 		
 		public Node(int value) {
 			this.value = value;
@@ -13,40 +13,104 @@ class Solution {
 		from.next.add(to);
 	}
 	
-	private boolean dfs(Node node, Node target) {
-		if (node.value == target.value)
+	private Set<Integer> set = new HashSet<>();
+	private Stack<Integer> stack = new Stack<>();
+	
+	private boolean topSort(Node node, Set<Integer> prev) {
+        if (node == null)
+            return true;
+		if (prev.contains(node.value))
+			return false;
+		if (set.contains(node.value))
 			return true;
 		
-		for (var each : node.next)
-			if (dfs(each, target))
-				return true;
+		prev.add(node.value);
 		
-		return false;
+		for (var next : node.next)
+			if(!topSort(next, prev))
+				return false;
+		
+		prev.remove(node.value);
+		set.add(node.value);
+		stack.push(node.value);
+		return true;
 	}
 	
-	private Map<Integer, Node> map = new HashMap<>();
+	private Map<Integer, Node> nodes = new HashMap<>();
+	private Map<Integer, Node> groups = new HashMap<>();
+	private Map<Integer, Integer> nTg = new HashMap<>();
+	private Map<Integer, List<Integer>> gTn = new HashMap<>();
 	
-    public List<Boolean> checkIfPrerequisite(int n, int[][] pre, int[][] queries) {
-        List<Boolean> result = new ArrayList<>();
-        for (int i = 0; i<queries.length; i++)
-        	result.add(false);
-        
-        if (pre.length == 0)
-        	return result;
-        
+	private int[] impossible() {
+		int[] out = new int[0];
+		return out;
+	}
+	
+    public int[] sortItems(int n, int m, int[] group, List<List<Integer>> beforeItems) {
         for (int i = 0; i<n; i++)
-        	map.put(i, new Node(i));
+        	nodes.put(i, new Node(i));
         
-        for (var req : pre)
-        	addEdge(map.get(req[1]), map.get(req[0]));
-        
-        int i = 0;
-        for (var query : queries) {
-        	if (dfs(map.get(query[1]), map.get(query[0])))
-        		result.set(i, true);
-        	i++;
+        for (int i = 0; i<beforeItems.size(); i++) {
+        	for (var before : beforeItems.get(i))
+        		addEdge(nodes.get(i), nodes.get(before));
         }
         
-        return result;
+        for (int i = 0; i<n; i++) {
+        	if(!topSort(nodes.get(i), new HashSet<>())) {
+        		return impossible();
+        	}
+        }
+        
+        int[] bSort = new int[n];
+        int b = n;
+        while(!stack.isEmpty())
+        	bSort[--b] = stack.pop();
+        
+        set.clear();
+        
+        int temp = m;
+        for (int i = 0; i<n; i++) {
+        	int ind = group[i];
+        	if(ind < 0)
+        		ind = temp++;
+        	groups.put(ind, new Node(ind));
+        	nTg.put(i, ind);
+        }
+        
+        for (int i = 0; i<n; i++) {
+        	for (var before : beforeItems.get(i)) {
+        		int from = nTg.get(before), to = nTg.get(i);
+        		if (from == to)
+        			continue;
+        		addEdge(groups.get(from) , groups.get(to));
+        	}
+        }
+        
+        for (int i = 0; i<temp; i++) {
+        	if (!topSort(groups.get(i), new HashSet<>()))
+        		return impossible();
+        }
+        
+        int[] gSort = new int[stack.size()];
+        int g = 0;
+        while (!stack.isEmpty())
+        	gSort[g++] = stack.pop();
+        
+        for (int i = 0; i<temp; i++) {
+        	gTn.put(i, new ArrayList<>());
+        }
+        
+        for (var item : bSort) {
+        	gTn.get(nTg.get(item)).add(item);
+        }
+        
+        b = 0;
+        for (var gr : gSort) {
+        	for (var it : gTn.get(gr)) {
+        		bSort[b++] = it;
+            }
+        }
+        
+        return bSort;
     }
 }
