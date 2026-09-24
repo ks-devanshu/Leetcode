@@ -1,116 +1,69 @@
 class Solution {
 	class Node {
-		int value;
+		char value;
 		Set<Node> next;
-		
-		public Node(int value) {
+
+		public Node(char value) {
 			this.value = value;
 			next = new HashSet<>();
 		}
 	}
-	
-	private void addEdge(Node from, Node to) {
+	private Map<Character, Node> map = new HashMap<>();
+
+	private void addEdge(Node from,Node to) {
 		from.next.add(to);
 	}
-	
-	private Set<Integer> set = new HashSet<>();
-	private Stack<Integer> stack = new Stack<>();
-	
-	private boolean topSort(Node node, Set<Integer> prev) {
-        if (node == null)
-            return true;
-		if (prev.contains(node.value))
+
+	private Set<Character> visited = new HashSet<>();
+	private Stack<Character> stack = new Stack<>();
+
+	private boolean topSort(Node node, Set<Character> visiting) {
+		if (visiting.contains(node.value))
 			return false;
-		if (set.contains(node.value))
+		if (visited.contains(node.value))
 			return true;
-		
-		prev.add(node.value);
-		
-		for (var next : node.next)
-			if(!topSort(next, prev))
+
+		visiting.add(node.value);
+		for (var nx : node.next) {
+			if (!topSort(nx, visiting))
 				return false;
-		
-		prev.remove(node.value);
-		set.add(node.value);
+		}
+		visiting.remove(node.value);
+		visited.add(node.value);
 		stack.push(node.value);
 		return true;
 	}
-	
-	private Map<Integer, Node> nodes = new HashMap<>();
-	private Map<Integer, Node> groups = new HashMap<>();
-	private Map<Integer, Integer> nTg = new HashMap<>();
-	private Map<Integer, List<Integer>> gTn = new HashMap<>();
-	
-	private int[] impossible() {
-		int[] out = new int[0];
-		return out;
-	}
-	
-    public int[] sortItems(int n, int m, int[] group, List<List<Integer>> beforeItems) {
-        for (int i = 0; i<n; i++)
-        	nodes.put(i, new Node(i));
-        
-        for (int i = 0; i<beforeItems.size(); i++) {
-        	for (var before : beforeItems.get(i))
-        		addEdge(nodes.get(i), nodes.get(before));
-        }
-        
-        for (int i = 0; i<n; i++) {
-        	if(!topSort(nodes.get(i), new HashSet<>())) {
-        		return impossible();
+
+    public String findOrder(String[] words) {
+        int n = words.length;
+
+        for (var word : words)
+        	for (var ch : word.toCharArray())
+        		map.put(ch, new Node(ch));
+
+        for (int i = 0; i<n-1; i++) {
+        	String before = words[i], after = words[i+1];
+        	int j = 0, k = 0;
+        	while (j< before.length() && k < after.length() && before.charAt(j) == after.charAt(k)) {
+        		j++;
+        		k++;
         	}
+        	if (k >= after.length())
+        	    return "";
+        	if (j >= before.length())
+        	    continue;
+        	addEdge(map.get(before.charAt(j)), map.get(after.charAt(k)));
         }
-        
-        int[] bSort = new int[n];
-        int b = n;
+
+        for (var node : map.values()) {
+        	if (!topSort(node, new HashSet<>()))
+        		return "";
+        }
+
+        String out = "";
         while(!stack.isEmpty())
-        	bSort[--b] = stack.pop();
-        
-        set.clear();
-        
-        int temp = m;
-        for (int i = 0; i<n; i++) {
-        	int ind = group[i];
-        	if(ind < 0)
-        		ind = temp++;
-        	groups.put(ind, new Node(ind));
-        	nTg.put(i, ind);
-        }
-        
-        for (int i = 0; i<n; i++) {
-        	for (var before : beforeItems.get(i)) {
-        		int from = nTg.get(before), to = nTg.get(i);
-        		if (from == to)
-        			continue;
-        		addEdge(groups.get(from) , groups.get(to));
-        	}
-        }
-        
-        for (int i = 0; i<temp; i++) {
-        	if (!topSort(groups.get(i), new HashSet<>()))
-        		return impossible();
-        }
-        
-        int[] gSort = new int[stack.size()];
-        int g = 0;
-        while (!stack.isEmpty())
-        	gSort[g++] = stack.pop();
-        
-        for (int i = 0; i<temp; i++) {
-        	gTn.put(i, new ArrayList<>());
-        }
-        
-        for (var item : bSort) {
-        	gTn.get(nTg.get(item)).add(item);
-        }
-        
-        b = 0;
-        for (var gr : gSort) {
-        	for (var it : gTn.get(gr)) {
-        		bSort[b++] = it;
-            }
-        }
-        
-        return bSort;
+        	out += stack.pop();
+
+        return out;
     }
 }
