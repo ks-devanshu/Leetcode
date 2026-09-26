@@ -1,26 +1,30 @@
 class Solution {
-    public boolean canPartition(int[] nums) {
-        int n = nums.length;
-        
-        int tSum = 0;
-        for (var num : nums)
-        	tSum += num;
-        
-        if (tSum % 2 != 0) return false;
-        
-        int target = tSum / 2;
-        Set<Integer> set = new HashSet<>();
-        set.add(0);
-        set.add(nums[n-1]);
-        for (int i = n-2; i>=0; i--) {
-        	var list = new ArrayList<Integer>();
-        	for (var each : set)
-        		list.add(each+nums[i]);
-        	set.addAll(list);
-        	if (set.contains(target))
-        		return true;
-        }
-        
-        return false;
+	int[] nums;
+	int n, target;
+	
+	Map<String, Integer> map = new HashMap<>();
+	
+	private int helper(int i, int sum) {
+		String help = i+" "+sum;
+		if (i >= n) {
+			if (sum == target)
+				return 1;
+			return 0;
+		}
+		
+		if (map.containsKey(help))
+			return map.get(help);
+		
+		map.put(help, (helper(i+1, sum-nums[i]) + helper(i+1, sum+nums[i])));
+		
+		return map.get(help);
+	}
+	
+    public int findTargetSumWays(int[] nums, int target) {
+        this.nums = nums;
+        n = nums.length;
+        this.target = target;
+
+        return helper(0, 0);
     }
 }
