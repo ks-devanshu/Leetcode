@@ -1,49 +1,32 @@
 class Solution {
-    String[] strs;
-    int size, m, n;
-    Map<Integer, String> zoCnt = new HashMap<>();
+    int[] stones;
+    int sum;
+    int n, target;
+    
     Map<String, Integer> dp = new HashMap<>();
     
-    private int helper(int i, int m, int n) {
-    	if (i >= size)
-    		return 0;
-    	String help = i+" "+m+" "+n;
-    	if (dp.containsKey(help))
-    		return dp.get(help);
+    private int helper(int i, int total) {
+    	if (total >= target || i >= n)
+    		return Math.abs(total-(sum-total));
+    	String key = i+" "+total;
+    	if (dp.containsKey(key))
+    		return dp.get(key);
     	
-    	dp.put(help, helper(i+1, m , n));
-    	var str = zoCnt.get(i).split(" ");
-    	int z = Integer.parseInt(str[0]);
-    	int o = Integer.parseInt(str[1]);
+    	dp.put(key, Math.min(helper(i+1, total+stones[i]), helper(i+1, total)));
     	
-    	if (z <= m && o <= n) {
-    		dp.replace(help ,
-    			Math.max(dp.get(help),
-    				1 + helper(i+1, m-z, n-o))
-    		);
-    	}
-    	
-    	return dp.get(help);
+    	return dp.get(key);
     }
     
-    public int findMaxForm(String[] strs, int m, int n) {
-        this.strs = strs;
-        size = strs.length;
-        this.m = m;
-        this.n = n;
-        
-        for (int i = 0; i<size; i++) {
-        	var str = strs[i];
-        	int z = 0, o = 0;
-        	for (var ch : str.toCharArray())
-        		if (ch == '0')
-        			z++;
-        		else
-        			o++;
-        	zoCnt.put(i,z+" "+o);
-        }
-        
-        return helper(0, m, n);
-        
+    public int lastStoneWeightII(int[] stones) {
+    	this.stones = stones;
+    	n = stones.length;
+    	
+    	sum = 0;
+    	for (var stone : stones)
+    		sum += stone;
+    	
+    	target = (int)Math.ceil(sum/2);
+    	
+    	return helper(0, 0);
     }
 }
