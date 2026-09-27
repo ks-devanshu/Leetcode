@@ -1,32 +1,18 @@
 class Solution {
-    int[] stones;
-    int sum;
-    int n, target;
-    
-    Map<String, Integer> dp = new HashMap<>();
-    
-    private int helper(int i, int total) {
-    	if (total >= target || i >= n)
-    		return Math.abs(total-(sum-total));
-    	String key = i+" "+total;
-    	if (dp.containsKey(key))
-    		return dp.get(key);
-    	
-    	dp.put(key, Math.min(helper(i+1, total+stones[i]), helper(i+1, total)));
-    	
-    	return dp.get(key);
-    }
-    
-    public int lastStoneWeightII(int[] stones) {
-    	this.stones = stones;
-    	n = stones.length;
-    	
-    	sum = 0;
-    	for (var stone : stones)
-    		sum += stone;
-    	
-    	target = (int)Math.ceil(sum/2);
-    	
-    	return helper(0, 0);
+    public int coinChange(int[] coins, int amount) {
+        int n = coins.length;
+        
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 0);
+        for (int i = 1; i<=amount+1; i++)
+        	map.put(i, amount+1);
+        
+        for (int i = 1; i <= amount; i++) {
+        	for (var coin : coins)
+        		if (i - coin >= 0)
+        			map.put(i, Math.min(map.get(i), 1+map.get(i-coin)));
+        }
+        
+        return map.get(amount) != amount+1 ? map.get(amount) : -1;
     }
 }
