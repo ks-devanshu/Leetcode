@@ -1,18 +1,25 @@
 class Solution {
-    public int coinChange(int[] coins, int amount) {
-        int n = coins.length;
+    int[] coins;
+    int n;
+    
+    Map<String, Integer> map = new HashMap<>();
+    private int helper(int i, int amount) {
+    	if (amount == 0)
+    		return 1;
+    	if (i >= n || amount < 0)
+    		return 0;
+    	String key = i+" "+amount;
+    	if (map.containsKey(key))
+    		return map.get(key);
+    	
+    	map.put(key, helper(i+1, amount) + helper(i, amount-coins[i]));
+    	return map.get(key);
+    }
+    
+    public int change(int amount, int[] coins) {
+        this.coins = coins;
+        n = coins.length;
         
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(0, 0);
-        for (int i = 1; i<=amount+1; i++)
-        	map.put(i, amount+1);
-        
-        for (int i = 1; i <= amount; i++) {
-        	for (var coin : coins)
-        		if (i - coin >= 0)
-        			map.put(i, Math.min(map.get(i), 1+map.get(i-coin)));
-        }
-        
-        return map.get(amount) != amount+1 ? map.get(amount) : -1;
+        return helper(0, amount);
     }
 }
