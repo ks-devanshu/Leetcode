@@ -1,31 +1,38 @@
 class Solution {
-    public int minDistance(String f, String s) {
-        int m = f.length(), n = s.length();
-        if (n == 0)
-        	return m;
-        if (m == 0)
-        	return n;
+	String s1, s2, s3;
+	int m, n, o;
+	Map<String, Boolean> map = new HashMap<>();
+	private boolean helper(int i, int j, int k) {
+		if (k == o) {
+			if (i == n && j == m)
+				return true;
+			return false;
+		}
+		String key = i+" "+j+" "+k;
+		if (map.containsKey(key))
+			return map.get(key);
+		
+		if (i < n && s3.charAt(k) == s1.charAt(i)) {
+			if (j < m && s3.charAt(k) == s2.charAt(j))
+				map.put(key, helper(i, j+1, k+1) || helper(i+1, j, k+1));
+			else
+				map.put(key,helper(i+1, j, k+1));
+		}
+		else if (j < m && s3.charAt(k) == s2.charAt(j))
+			map.put(key, helper(i, j+1, k+1));
+		else
+			map.put(key, false);
+		
+		return map.get(key);
+	}
+    public boolean isInterleave(String s1, String s2, String s3) {
+        this.s1 = s1;
+        this.s2 = s2;
+        this.s3 = s3;
+        n = s1.length();
+        m = s2.length();
+        o = s3.length();
         
-        int[] dp = new int[n+1];
-        for (int i = 0; i <= n; i++)
-        	dp[i] = i;
-        
-        for (int i = 0; i<m; i++) {
-        	int[] temp = new int[n+1];
-        	temp[0] = i+1;
-        	for (int j = 1; j<=n; j++) {
-        		if (f.charAt(i) == s.charAt(j-1)) {
-        			temp[j] = dp[j-1];
-        		}
-        		else {
-        			int op = Math.min(temp[j-1], Math.min(dp[j], dp[j-1]));
-        			op += 1;
-        			temp[j] = op;
-        		}
-        	}
-        	dp = temp;
-        }
-        
-        return dp[n];
+        return helper(0,0,0);
     }
 }
