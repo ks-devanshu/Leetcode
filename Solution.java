@@ -1,29 +1,31 @@
 class Solution {
-    String s,t;
-    int m, n;
-    public int numDistinct(String s, String t) {
-        this.s = s;
-        this.t = t;
-        m = s.length();
-        n = t.length();
-        return helper(0, 0);
-    }
-    Map<String, Integer> map = new HashMap<>();
-    private int helper(int i, int j) {
-    	if (j >= n)
-    		return 1;
-    	if (i >= m)
-    		return 0;
-    	String key = i+" "+j;
-    	if (map.containsKey(key))
-    		return map.get(key);
-    	
-    	if (s.charAt(i) == t.charAt(j)) {
-    		map.put(key, helper(i+1, j+1)+helper(i+1, j));
-    	}
-    	else
-    		map.put(key, helper(i+1, j));
-    	
-    	return map.get(key);
+    public int minDistance(String f, String s) {
+        int m = f.length(), n = s.length();
+        if (n == 0)
+        	return m;
+        if (m == 0)
+        	return n;
+        
+        int[] dp = new int[n+1];
+        for (int i = 0; i <= n; i++)
+        	dp[i] = i;
+        
+        for (int i = 0; i<m; i++) {
+        	int[] temp = new int[n+1];
+        	temp[0] = i+1;
+        	for (int j = 1; j<=n; j++) {
+        		if (f.charAt(i) == s.charAt(j-1)) {
+        			temp[j] = dp[j-1];
+        		}
+        		else {
+        			int op = Math.min(temp[j-1], Math.min(dp[j], dp[j-1]));
+        			op += 1;
+        			temp[j] = op;
+        		}
+        	}
+        	dp = temp;
+        }
+        
+        return dp[n];
     }
 }
