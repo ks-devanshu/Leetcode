@@ -1,24 +1,21 @@
 class Solution {
-    public int countSubstrings(String s) {
+    public int longestPalindromeSubseq(String s) {
         int n = s.length();
-        int count = 0;
-        
+        int[] dp = new int[n+1];
         for (int i = 0; i<n; i++) {
-        	int left = i, right = i;
-        	while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {
-        		count++;
-        		left--;
-        		right++;
+        	int[] temp = new int[n+1];
+        	int left = n-i-1;
+        	for (int j = 1; j<=n; j++) {
+        		if (s.charAt(j-1) == s.charAt(left)) {
+        			temp[j] = 1 + dp[j-1];
+        		}
+        		else {
+        			temp[j] = Math.max(dp[j], temp[j-1]);
+        		}
         	}
-        	left = i;
-        	right = i+1;
-        	while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {
-        		count++;
-        		left--;
-        		right++;
-        	}
+        	dp = temp;
         }
         
-        return count;
+        return dp[n];
     }
 }
