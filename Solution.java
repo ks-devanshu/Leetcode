@@ -1,34 +1,36 @@
 class Solution {
-    public String shortestCommonSupersequence(String str1, String str2) {
-        char[] a = str1.toCharArray(), b = str2.toCharArray();
-        int m = a.length, n = b.length;
+    public String longestPalindrome(String s) {
+        int n = s.length();
+        int length = 1;
+        String result = s.charAt(0)+"";
         
-        System.out.println(n);
+        for (int i = 0; i<n; i++) {
+        	// odd
+        	int left = i, right = i;
+        	while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {
+        		int len = right-left+1;
+        		if (len > length) {
+        			length = len;
+        			result = s.substring(left, right+1);
+        		}
+        		left--;
+        		right++;
+        	}
+        	
+        	// even
+        	left = i;
+        	right = i+1;
+        	while (left >= 0 && right < n && s.charAt(left) == s.charAt(right)) {
+        		int len = right-left+1;
+        		if (len > length) {
+        			length = len;
+        			result = s.substring(left, right+1);
+        		}
+        		left--;
+        		right++;
+        	}
+        }
         
-    	String[] dp = new String[n+1];
-    	dp[0] = "";
-    	for (int i = 1; i<=n; i++) {
-    		dp[i] = dp[i-1]+b[i-1];
-    	}
-    	
-    	for (int i = 0; i<m; i++) {
-    		String[] temp = new String[n+1];
-    		temp[0] = dp[0]+a[i];
-    		for (int j = 1; j<=n; j++) {
-    			if (a[i] == b[j-1]) {
-    				temp[j] = dp[j-1]+a[i];
-    			}
-    			else {
-    				if (dp[j].length() <= temp[j-1].length()) {
-    					temp[j] = dp[j]+a[i];
-    				}
-    				else
-    					temp[j] = temp[j-1]+b[j-1];
-    			}
-    		}
-    		dp = temp;
-    	}
-        
-        return dp[n];
+        return result;
     }
 }
