@@ -1,38 +1,34 @@
 class Solution {
-	String s1, s2, s3;
-	int m, n, o;
-	Map<String, Boolean> map = new HashMap<>();
-	private boolean helper(int i, int j, int k) {
-		if (k == o) {
-			if (i == n && j == m)
-				return true;
-			return false;
-		}
-		String key = i+" "+j+" "+k;
-		if (map.containsKey(key))
-			return map.get(key);
-		
-		if (i < n && s3.charAt(k) == s1.charAt(i)) {
-			if (j < m && s3.charAt(k) == s2.charAt(j))
-				map.put(key, helper(i, j+1, k+1) || helper(i+1, j, k+1));
-			else
-				map.put(key,helper(i+1, j, k+1));
-		}
-		else if (j < m && s3.charAt(k) == s2.charAt(j))
-			map.put(key, helper(i, j+1, k+1));
-		else
-			map.put(key, false);
-		
-		return map.get(key);
-	}
-    public boolean isInterleave(String s1, String s2, String s3) {
-        this.s1 = s1;
-        this.s2 = s2;
-        this.s3 = s3;
-        n = s1.length();
-        m = s2.length();
-        o = s3.length();
+    public String shortestCommonSupersequence(String str1, String str2) {
+        char[] a = str1.toCharArray(), b = str2.toCharArray();
+        int m = a.length, n = b.length;
         
-        return helper(0,0,0);
+        System.out.println(n);
+        
+    	String[] dp = new String[n+1];
+    	dp[0] = "";
+    	for (int i = 1; i<=n; i++) {
+    		dp[i] = dp[i-1]+b[i-1];
+    	}
+    	
+    	for (int i = 0; i<m; i++) {
+    		String[] temp = new String[n+1];
+    		temp[0] = dp[0]+a[i];
+    		for (int j = 1; j<=n; j++) {
+    			if (a[i] == b[j-1]) {
+    				temp[j] = dp[j-1]+a[i];
+    			}
+    			else {
+    				if (dp[j].length() <= temp[j-1].length()) {
+    					temp[j] = dp[j]+a[i];
+    				}
+    				else
+    					temp[j] = temp[j-1]+b[j-1];
+    			}
+    		}
+    		dp = temp;
+    	}
+        
+        return dp[n];
     }
 }
