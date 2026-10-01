@@ -1,21 +1,21 @@
 class Solution {
-    public int longestPalindromeSubseq(String s) {
-        int n = s.length();
-        int[] dp = new int[n+1];
-        for (int i = 0; i<n; i++) {
-        	int[] temp = new int[n+1];
-        	int left = n-i-1;
-        	for (int j = 1; j<=n; j++) {
-        		if (s.charAt(j-1) == s.charAt(left)) {
-        			temp[j] = 1 + dp[j-1];
-        		}
-        		else {
-        			temp[j] = Math.max(dp[j], temp[j-1]);
-        		}
+    public int[] twoSum(int[] numbers, int target) {
+        int left = 0, right = numbers.length - 1;
+        int[] result = new int[2];
+        
+        while (left < right) {
+        	int sum = numbers[left] + numbers[right];
+        	if (sum == target) {
+        		result[0] = left+1;
+        		result[1] = right+1;
+        		return result;
         	}
-        	dp = temp;
+        	else if (sum > target)
+        		right--;
+        	else
+        		left++;
         }
         
-        return dp[n];
+        return result;
     }
 }
