@@ -1,19 +1,20 @@
 class Solution {
-    public int[] twoSum(int[] numbers, int target) {
-        int left = 0, right = numbers.length - 1;
-        int[] result = new int[2];
+    public int[] sortedSquares(int[] nums) {
+    	int n = nums.length;
+        int[] result = new int[n];
         
-        while (left < right) {
-        	int sum = numbers[left] + numbers[right];
-        	if (sum == target) {
-        		result[0] = left+1;
-        		result[1] = right+1;
-        		return result;
-        	}
-        	else if (sum > target)
-        		right--;
-        	else
+        int left = 0, right = n-1;
+        int i = n-1;
+        while (left <= right) {
+        	if (Math.abs(nums[left]) >= Math.abs(nums[right])) {
+        		result[i] = nums[left]*nums[left];
         		left++;
+        	}
+        	else {
+        		result[i] = nums[right]*nums[right];
+        		right--;
+        	}
+        	i--;
         }
         
         return result;
