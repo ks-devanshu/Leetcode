@@ -1,22 +1,29 @@
 class Solution {
-    public int[] sortedSquares(int[] nums) {
-    	int n = nums.length;
-        int[] result = new int[n];
+    public boolean lemonadeChange(int[] bills) {
+    	int n = bills.length;
+        int[] deno = new int[2];
         
-        int left = 0, right = n-1;
-        int i = n-1;
-        while (left <= right) {
-        	if (Math.abs(nums[left]) >= Math.abs(nums[right])) {
-        		result[i] = nums[left]*nums[left];
-        		left++;
+        for (int bill : bills) {
+        	int change = bill - 5;
+        	if (change == 0) {
+        		deno[0]++;
         	}
-        	else {
-        		result[i] = nums[right]*nums[right];
-        		right--;
+        	else if (change == 5 && deno[0] > 0) {
+        		deno[0]--;
+        		deno[1]++;
         	}
-        	i--;
+        	else if (change == 15 && ((deno[0] > 0 && deno[1] > 0) || (deno[0] > 2))) {
+        		if (deno[1] > 0) {
+        			deno[0]--;
+        			deno[1]--;
+        		}
+        		else
+        			deno[0] -= 3;
+        	}
+        	else
+        		return false;
         }
         
-        return result;
+        return true;
     }
 }
