@@ -1,29 +1,33 @@
 class Solution {
-    public boolean lemonadeChange(int[] bills) {
-    	int n = bills.length;
-        int[] deno = new int[2];
-        
-        for (int bill : bills) {
-        	int change = bill - 5;
-        	if (change == 0) {
-        		deno[0]++;
-        	}
-        	else if (change == 5 && deno[0] > 0) {
-        		deno[0]--;
-        		deno[1]++;
-        	}
-        	else if (change == 15 && ((deno[0] > 0 && deno[1] > 0) || (deno[0] > 2))) {
-        		if (deno[1] > 0) {
-        			deno[0]--;
-        			deno[1]--;
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length;
+        while (left < right) {
+        	int mid = left + ((right-left)/2);
+        	int a = nums[left], b = nums[mid] , c = nums[right-1];
+        	if (b == target)
+        		return mid;
+        	
+        	if (a < b) {
+        		if (target < b && target >= a) {
+        			right = mid;
+        			continue;
         		}
-        		else
-        			deno[0] -= 3;
+        		else {
+        			left = mid+1;
+        			continue;
+        		}
         	}
-        	else
-        		return false;
+        	else {
+        		if (target < b || target >= a) {
+        			right = mid;
+        			continue;
+        		}
+        		else {
+        			left = mid+1;
+        			continue;
+        		}
+        	}
         }
-        
-        return true;
+        return -1;
     }
 }
