@@ -1,14 +1,27 @@
 class Solution {
-    public int maxProfit(int[] prices) {
-        int n = prices.length;
-        int profit = 0;
-        int max = 0;
+    public int[] findMissingAndRepeatedValues(int[][] grid) {
+        int n = (int) Math.pow(grid.length, 2);
         
-        for (int i = n-1; i>=0; i--) {
-        	profit = Math.max(profit, max - prices[i]);
-        	max = Math.max(max, prices[i]);
-        }
+        long sum = 0, sqSum = 0;
+        for (var row : grid)
+        	for (var num : row) {
+        		sum += num;
+        		sqSum += (num*num);
+        	}
         
-        return profit;
+        long eSum = (n*(n+1))/2L;
+        long esqSum = ((n * (n+1L))*((2*n)+1L))/6L;
+        
+        long aMb = sum - eSum;
+        long aPb = sqSum - esqSum;
+        long fsum = aPb / aMb;
+        
+        int a = (int)(fsum + aMb)/2;
+        int b = (int)fsum - a;
+        
+        int[] out = new int[2];
+        out[0] = a;
+        out[1] = b;
+        return out;
     }
 }
