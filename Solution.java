@@ -1,33 +1,21 @@
 class Solution {
-    public Node copyRandomList(Node head) {
-        if (head == null)
-            return null;
-        int index = 0;
-        Node current = head;
-        Map<Integer, Node> iTn = new HashMap<>();
-        Map<Node, Integer> nTi = new HashMap<>();
-        iTn.put(-1, null);
-        nTi.put(null, -1);
-        while (current != null) {
-            iTn.put(index, new Node(current.val));
-            if (iTn.get(index-1) != null) {
-                iTn.get(index-1).next = iTn.get(index);
-            }
-            nTi.put(current, index);
-            current = current.next;
-            index++;
+    public int maxProduct(int[] nums) {
+        int max = nums[0];
+        for (int num : nums)
+        	max = Math.max(max, num);
+        
+        int lMax = 1, lMin = 1;
+        for (int num : nums) {
+        	if (num == 0) {
+        		lMax = 1;
+        		lMin = 1;
+        		continue;
+        	}
+        	int temp = lMax*num;
+        	lMax = Math.max(num, Math.max(lMax*num, lMin*num));
+        	lMin = Math.min(num, Math.min(temp, lMin*num));
+        	max = Math.max(max, lMax);
         }
-        iTn.get(index-1).next = null;
-        int count = 0;
-        current = head;
-        while (current != null) {
-            int ind = nTi.get(current.random);
-            Node cp = iTn.get(count);
-            cp.random = iTn.get(ind);
-            current = current.next;
-            count++;
-        }
-
-        return iTn.get(0);
+        return max;
     }
 }
