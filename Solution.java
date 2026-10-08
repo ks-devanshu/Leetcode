@@ -1,46 +1,27 @@
 class Solution {
-    public List<List<Integer>> threeSum(int[] nums) {
-        int n = nums.length;
-
-        Arrays.sort(nums);
-        
-        List<List<Integer>> out = new ArrayList<>();
-        
-        Set<Integer> set = new HashSet<>();
-        for (int i = 0; i<n; i++) {
-        	if (set.contains(nums[i]))
-        		continue;
-        	int target = 0 - nums[i];
-        	int start = i+1, end = n-1;
-            Set<Integer> used = new HashSet<>();
-        	while (start < end) {
-        		int sum = nums[start] + nums[end];
-        		if (sum == target) {
-                    if (used.contains(nums[start]) && used.contains(nums[end])) {
-                        start++;
-                        end--;
-                        continue;
-                    }
-        			List<Integer> list = new ArrayList<>();
-        			list.add(nums[i]);
-        			list.add(nums[start]);
-        			list.add(nums[end]);
-        			out.add(list);
-        			used.add(nums[start]);
-        			used.add(nums[end]);
-        			start++;
-        			end--;
-        		}
-        		else if (sum < target) {
-        			start++;
-        		}
-        		else
-        			end--;
-        			
-        	}
-        	set.add(nums[i]);
-        }
-        
-        return out;
+    public int kConcatenationMaxSum(int[] arr, int k) {
+        int n = arr.length;
+        long mod = 1_000_000_007L;
+		long totalSum = 0L;
+		for (int i = 0; i<n; i++)
+			totalSum += arr[i];
+		
+		int copies = Math.min(k, 2);
+		long maxSub = 0L, current = 0L;
+		
+		for (int i = 0 ; i<n*copies; i++) {
+			current = Math.max(0L, current+arr[i%n]);
+			maxSub = Math.max(maxSub, current);
+		}
+		
+		if (k <= 2)
+			return (int) (maxSub % mod);
+		
+		if (totalSum > 0) {
+			long total = maxSub + ((k-2) * totalSum);
+			return (int) (total % mod);
+		}
+		
+		return (int) (maxSub % mod);
     }
 }
