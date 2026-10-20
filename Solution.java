@@ -1,22 +1,38 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    public int eraseOverlapIntervals(int[][] intervals) {
-        int n = intervals.length;
+    public ListNode mergeNodes(ListNode head) {
+        ListNode curr = head.next;
+        ListNode prev = null;
+        ListNode newHead = prev;
+        int sum = 0;
         
-        Arrays.sort(intervals, Comparator.comparingInt(x -> x[0]));
-        
-        int max = intervals[0][1], count = 0, i = 1;
-        while (i < n) {
-        	int[] current = intervals[i];
-        	if (current[0] < max) {
-        		max = Math.min(max, current[1]);
-        		count++;
+        while (curr != null) {
+        	if (curr.val == 0) {
+        		if (prev == null) {
+        			prev = new ListNode(sum);
+        			newHead = prev;
+        		}
+        		else {
+        			prev.next = new ListNode(sum);
+        			prev = prev.next;
+        		}
+    			sum = 0;
         	}
         	else {
-        		max = current[1];
+        		sum += curr.val;
         	}
-        	i++;
+        	
+        	curr = curr.next;
         }
-        
-        return count;
+        return newHead;
     }
 }
