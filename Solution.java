@@ -1,26 +1,36 @@
 class Solution {
-    private int gcd(int a, int b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        while (b != 0) {
-            int temp = b;
-            b = a % b;
-            a = temp;
+    public String[] createGrid(int m, int n) {
+    	String[] out = new String[m];
+        if (m == 1) {
+        	StringBuilder res = new StringBuilder();
+        	for(int i = 0; i<n; i++)
+        		res.append(".");
+        	out[0] = res.toString();
+        	return out;
         }
-        return a;
-    }
-    
-    public int subarrayGCD(int[] nums, int k) {
-        int n = nums.length, count = 0;
         
-        for (int i = 0; i<n; i++) {
-        	int gcd = 0;
-        	for (int j = i; j<n; j++) {
-        		gcd = gcd(gcd, nums[j]);
-        		if (gcd == k)
-        			count++;
+        if (n == 1) {
+        	for (int i = 0; i<m; i++) {
+        		out[i] = ".";
         	}
+        	
+        	return out;
         }
-        return count;
+        
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i<n; i++)
+        	res.append(".");
+        out[0] = res.toString();
+        
+        for (int i = 1; i<m; i++) {
+        	res = new StringBuilder();
+        	for (int j = 0; j<n-1; j++) {
+        		res.append("#");
+        	}
+        	res.append(".");
+        	out[i] = res.toString();
+        }
+        
+        return out;
     }
 }
