@@ -1,36 +1,26 @@
 class Solution {
-    public String[] createGrid(int m, int n) {
-    	String[] out = new String[m];
-        if (m == 1) {
-        	StringBuilder res = new StringBuilder();
-        	for(int i = 0; i<n; i++)
-        		res.append(".");
-        	out[0] = res.toString();
-        	return out;
-        }
+    final int MOD = 1_000_000_007;
+    private long biPow(long a, long b) {
+    	long res = 1;
+    	while (b > 0) {
+    		if ((b & 1) == 1) {
+    			res = res * a % MOD;
+    		}
+            a = a * a % MOD;
+    		b >>= 1;
+    	}
+    	return res;
+    }
+    
+    public int countGoodNumbers(long n) {
+        if (n == 1)
+        	return 5;
         
-        if (n == 1) {
-        	for (int i = 0; i<m; i++) {
-        		out[i] = ".";
-        	}
-        	
-        	return out;
-        }
+        long even = (n + 1) >> 1;
+        long odd = n >> 1;
         
-        StringBuilder res = new StringBuilder();
-        for (int i = 0; i<n; i++)
-        	res.append(".");
-        out[0] = res.toString();
-        
-        for (int i = 1; i<m; i++) {
-        	res = new StringBuilder();
-        	for (int j = 0; j<n-1; j++) {
-        		res.append("#");
-        	}
-        	res.append(".");
-        	out[i] = res.toString();
-        }
-        
-        return out;
+        long result = biPow(5, even) * biPow(4, odd) % MOD;
+
+        return (int) result;
     }
 }
