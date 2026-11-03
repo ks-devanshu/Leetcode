@@ -1,26 +1,39 @@
 class Solution {
-    final int MOD = 1_000_000_007;
-    private long biPow(long a, long b) {
-    	long res = 1;
-    	while (b > 0) {
-    		if ((b & 1) == 1) {
-    			res = res * a % MOD;
-    		}
-            a = a * a % MOD;
-    		b >>= 1;
-    	}
-    	return res;
+    private long spf(long a) {
+        if (a%2 == 0)
+            return 2;
+        int i = 3;
+        while (i*i <= a) {
+            if (a % i == 0)
+                return i;
+            i += 2;
+        }
+        return a;
     }
-    
-    public int countGoodNumbers(long n) {
-        if (n == 1)
-        	return 5;
-        
-        long even = (n + 1) >> 1;
-        long odd = n >> 1;
-        
-        long result = biPow(5, even) * biPow(4, odd) % MOD;
+    public long minimumMaxValue(int n, int index, int value) {
+        if (value == 1)
+            return -1;
+        var spf = spf(value);
 
-        return (int) result;
+        int onRight = n-index-1;
+        long gap = 0;
+        if (onRight == 0) {
+            gap = 0;
+        }
+        else {
+            gap += spf;
+            gap += 2*(onRight-1);
+        }
+
+        if (index == 0)
+            return value+gap;
+
+        int temp = value;
+        temp -= spf;
+        temp -= 2*(index-1);
+        if (temp <= 1)
+            return -1;
+
+        return value+gap;
     }
 }
