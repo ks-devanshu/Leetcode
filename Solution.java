@@ -1,39 +1,23 @@
 class Solution {
-	private class Pair {
-		int num, sum;
-		public Pair(int num, int sum) {
-			this.num = num;
-			this.sum = sum;
-		}
-	}
-    public int sumFourDivisors(int[] nums) {
-        int n = nums.length;
+    public int countPrimes(int n) {
+        if (n <= 2)
+            return 0;
+        boolean[] isPrime = new boolean[n+1];
+        isPrime[0] = isPrime[1] = false;
+        for (int i = 2; i<=n; i++)
+            isPrime[i] = true;
         
-        int max = nums[0];
-        for (var num : nums)
-        	max = Math.max(max, num);
-        
-        Pair[] pairs = new Pair[max+1];
-        for (int i = 2; i<=max; i++) {
-        	for (int j = i; j<=max; j += i) {
-        		if (pairs[j] == null) {
-        			pairs[j] = new Pair(1, i);
-        		}
-        		else {
-        			pairs[j].num += 1;
-        			pairs[j].sum += i;
-        		}
-        	}
-        }
-
-        int sum = 0;
-        for (var num : nums) {
-            if (num == 1)
-                continue;
-        	if (pairs[num].num == 3)
-        		sum += pairs[num].sum+1;
+        int count = 0;
+        for (int i = 2; i<n; i++) {
+            if (isPrime[i])
+                count++;
+            if ((long) i*i <= n) {
+                for (int j = i*i; j<= n; j += i) {
+                    isPrime[j] =  false;
+                }
+            }
         }
         
-        return sum;
+        return count;
     }
 }
