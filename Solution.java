@@ -1,39 +1,39 @@
 class Solution {
-    private long spf(long a) {
-        if (a%2 == 0)
-            return 2;
-        int i = 3;
-        while (i*i <= a) {
-            if (a % i == 0)
-                return i;
-            i += 2;
+	private class Pair {
+		int num, sum;
+		public Pair(int num, int sum) {
+			this.num = num;
+			this.sum = sum;
+		}
+	}
+    public int sumFourDivisors(int[] nums) {
+        int n = nums.length;
+        
+        int max = nums[0];
+        for (var num : nums)
+        	max = Math.max(max, num);
+        
+        Pair[] pairs = new Pair[max+1];
+        for (int i = 2; i<=max; i++) {
+        	for (int j = i; j<=max; j += i) {
+        		if (pairs[j] == null) {
+        			pairs[j] = new Pair(1, i);
+        		}
+        		else {
+        			pairs[j].num += 1;
+        			pairs[j].sum += i;
+        		}
+        	}
         }
-        return a;
-    }
-    public long minimumMaxValue(int n, int index, int value) {
-        if (value == 1)
-            return -1;
-        var spf = spf(value);
 
-        int onRight = n-index-1;
-        long gap = 0;
-        if (onRight == 0) {
-            gap = 0;
+        int sum = 0;
+        for (var num : nums) {
+            if (num == 1)
+                continue;
+        	if (pairs[num].num == 3)
+        		sum += pairs[num].sum+1;
         }
-        else {
-            gap += spf;
-            gap += 2*(onRight-1);
-        }
-
-        if (index == 0)
-            return value+gap;
-
-        int temp = value;
-        temp -= spf;
-        temp -= 2*(index-1);
-        if (temp <= 1)
-            return -1;
-
-        return value+gap;
+        
+        return sum;
     }
 }
