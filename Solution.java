@@ -1,44 +1,36 @@
 class Solution {
-    public int[] closestPrimes(int left, int right) {
-        int n = right+1;
-        boolean[] isPrime = new boolean[n+1];
-        for (int i = 0; i<n; i++)
-        	isPrime[i] = true;
-        isPrime[0] = isPrime[1] = false;
-
-        List<Integer> list = new ArrayList<>();
-
-        for (int i = 2; i<n; i++) {
-        	if (isPrime[i]) {
-        		if (i >= left) {
-        			list.add(i);
-        		}
-        	}
-        	if ((long) i*i < n) {
-        		for (int j = i*i; j<n; j+=i) {
-        			isPrime[j] = false;
-        		}
+    public int superPow(int a, int[] b) {
+        if (a == 1)
+        	return 1;
+        
+        if (b.length == 1) {
+        	if (b[0] == 0)
+        		return 1;
+        	if (b[0] == 1)
+        		return a;
+        }
+        int mod = 1337, phi = 1140;
+        int num = 0;
+        boolean isLarge = false;
+        for (var digit : b) {
+        	num = num*10 + digit;
+        	if (num >= phi) {
+        		isLarge = true;
+        		num %= phi;
         	}
         }
         
-        int[] result = new int[2];
-        result[0] = result[1] = -1;
-        if (list.size() <= 1) {
-            return result;
+        if (isLarge)
+        	num += phi;
+        
+        a %= mod;
+        long res = 1;
+        while (num > 0) {
+        	if ((num&1) == 1)
+        		res = res * a % mod;
+        	a = a * a % mod;
+        	num >>= 1;
         }
-
-        int min = Integer.MAX_VALUE;
-        int i = 1;
-        while (i < list.size()) {
-            int leftNum = list.get(i-1), rightNum = list.get(i);
-            if (rightNum-leftNum < min) {
-                min = rightNum-leftNum;
-                result[0] = leftNum;
-                result[1] = rightNum;
-            }
-            i++;
-        }
-
-        return result;
+        return (int) res;
     }
 }
