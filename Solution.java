@@ -1,36 +1,39 @@
 class Solution {
-    public int superPow(int a, int[] b) {
-        if (a == 1)
-        	return 1;
+    Set<String> set;
+    String s;
+    public boolean wordBreak(String s, List<String> wordDict) {
+    	this.s = s;
+    	int n = s.length();
+    	set = new HashSet<>();
+    	for (var word : wordDict)
+    		set.add(word);
+    	
+    	if (set.contains(s))
+    		return true;
+    	
+    	for (int i = 1; i<=n; i++) {
+    		if (set.contains(s.substring(0, i)) && helper(i, n))
+    			return true;
+    	}
+    	return false;
+    	
+    }
+    Map<String, Boolean> map = new HashMap<>();
+    private boolean helper(int i, int j) {
+    	if (j <= i)
+    		return true;
+        if (set.contains(s.substring(i, j)))
+            return true;
+        String key = i+" "+j;
+        if (map.containsKey(key))
+            return map.get(key);
         
-        if (b.length == 1) {
-        	if (b[0] == 0)
-        		return 1;
-        	if (b[0] == 1)
-        		return a;
-        }
-        int mod = 1337, phi = 1140;
-        int num = 0;
-        boolean isLarge = false;
-        for (var digit : b) {
-        	num = num*10 + digit;
-        	if (num >= phi) {
-        		isLarge = true;
-        		num %= phi;
-        	}
-        }
-        
-        if (isLarge)
-        	num += phi;
-        
-        a %= mod;
-        long res = 1;
-        while (num > 0) {
-        	if ((num&1) == 1)
-        		res = res * a % mod;
-        	a = a * a % mod;
-        	num >>= 1;
-        }
-        return (int) res;
+        for (int k = i+1; k<j; k++) {
+            map.put(key, helper(k, j));
+    		if (set.contains(s.substring(i, k)) && map.get(key))
+    			return true;
+    	}
+        map.put(key, false);
+	    return map.get(key);
     }
 }
