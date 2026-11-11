@@ -1,19 +1,14 @@
 class Solution {
-    public int countSeniors(String[] details) {
-        int count = 0;
+    public boolean isSubsequence(String s, String t) {
+        int m = s.length();
+        int n = t.length();
 
-        for (var each : details) {
-            var t = each.split("M");
-            if (t.length < 2)
-                t = each.split("F");
-            if (t.length < 2)
-                t = each.split("O");
-            String age = t[1].substring(0, t[1].length()-2);
-            int aAge = Integer.parseInt(age);
-            if (aAge > 60) 
-                count++;
+        int i = 0, j = 0;
+        while (i < m && j < n) {
+            if (s.charAt(i) == t.charAt(j))
+                i++;
+            j++;
         }
-
-        return count;
+        return i >= m;
     }
 }
