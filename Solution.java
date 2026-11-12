@@ -1,34 +1,28 @@
 class Solution {
-	class Pair {
-		int a, b;
-		public Pair(int a, int b) {
-			this.a = a;
-			this.b = b;
-		}
-	}
-    public int findLeastNumOfUniqueInts(int[] arr, int k) {
-        if (k == arr.length)
-            return 0;
-        Queue<Pair> queue = new PriorityQueue<>(Comparator.comparingInt(x->x.b));
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int item : arr)
-        	map.put(item, map.getOrDefault(item, 0)+1);
-        if (k == 0)
-            return map.size();
-
-        for (var key : map.keySet())
-        	queue.add(new Pair(key, map.get(key)));
+    public int[] longestObstacleCourseAtEachPosition(int[] arr) {
+        int n = arr.length;
+        int[] res = new int[n];
+        int[] dp = new int[n+1];
+        for(int i = 0; i<n+1; i++)
+        	dp[i] = 1_000_000_000;
         
-        while (k > 0) {
-            var left = queue.peek();
-            if (left.b <= k) {
-                k -= left.b;
-                queue.poll();
-            }
-            else
-                return queue.size();
+        for (int i = 0; i<n; i++) {
+        	int index = bSearch(dp, arr[i]);
+        	res[i] = index+1;
+        	dp[index] = arr[i];
         }
         
-        return queue.size();
+        return res;
+    }
+    private int bSearch(int[] dp, int num) {
+    	int left = 0, right = dp.length-1;
+    	while (left < right) {
+    		int mid = left + (right-left)/2;
+    		if (num < dp[mid])
+    			right = mid;
+    		else
+    			left = mid+1;
+    	}
+    	return right;
     }
 }
